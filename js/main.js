@@ -16,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
  */
 class HereseApp {
   constructor() {
-    this.isEntered = false;
+    this.isEntered = true;
     this.audioCtx = null;
     this.pinkNoise = null;
     this.audioMuted = false;
@@ -27,9 +27,9 @@ class HereseApp {
     this._shopifyHydrationStarted = false;
 
     this._initScene();
-    this._initEntrance();
     this._initForms();
     this._initCart();
+    this._initExperience();
   }
 
   _detectMobileRuntime() {
@@ -53,7 +53,7 @@ class HereseApp {
     this.scene.add(this.ribbon.group);
     this.scene.add(this.mandala.group);
 
-    // Start render loop immediately (behind entrance overlay)
+    // Start render loop immediately.
     this._animate();
 
     // Handle responsive canvas and scroll recalculation.
@@ -81,38 +81,16 @@ class HereseApp {
   }
 
   /* ═══════════════════════════════════════════════
-     ENTRANCE OVERLAY
+     EXPERIENCE BOOT
      ═══════════════════════════════════════════════ */
 
-  _initEntrance() {
-    const overlay = document.getElementById('entrance-overlay');
-    const enterBtn = document.getElementById('enter-btn');
-
-    enterBtn.addEventListener('click', () => {
-      this.isEntered = true;
-
-      // Fade out entrance
-      overlay.classList.add('hidden');
-
-      // Reveal scroll content
-      const scrollContainer = document.getElementById('scroll-container');
-      scrollContainer.style.opacity = '1';
-      scrollContainer.style.pointerEvents = 'auto';
-
-      // Reveal navigation
-      const mainNav = document.getElementById('main-nav');
-      mainNav.style.opacity = '1';
-      mainNav.style.pointerEvents = 'auto';
-
-      // Start audio
-      this._initAudio();
-
-      // Initialize scroll system after a short delay
-      setTimeout(() => {
-        this._initLenis();
-        this._initGSAP();
-        this._initAudioToggle();
-      }, 500);
+  _initExperience() {
+    requestAnimationFrame(() => {
+      this._initLenis();
+      this._initGSAP();
+      this._initAudioToggle();
+      this._initSearch();
+      ScrollTrigger.refresh();
     });
   }
 
@@ -432,7 +410,22 @@ class HereseApp {
     const toggleBtn = document.getElementById('audio-toggle');
     if (!toggleBtn) return;
 
+    const toggleIcon = toggleBtn.querySelector('.audio-icon');
+    if (!this.audioCtx) {
+      this.audioMuted = true;
+      toggleBtn.classList.add('muted');
+      if (toggleIcon) toggleIcon.textContent = '🔇';
+    }
+
     toggleBtn.addEventListener('click', () => {
+      if (!this.audioCtx) {
+        this.audioMuted = false;
+        toggleBtn.classList.remove('muted');
+        if (toggleIcon) toggleIcon.textContent = '🔊';
+        this._initAudio();
+        return;
+      }
+
       this.audioMuted = !this.audioMuted;
       toggleBtn.classList.toggle('muted', this.audioMuted);
 
@@ -451,6 +444,27 @@ class HereseApp {
   /* ═══════════════════════════════════════════════
      FORMS
      ═══════════════════════════════════════════════ */
+
+  _initSearch() {
+    const searchBtn = document.getElementById('search-btn');
+    if (!searchBtn) return;
+
+    searchBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      if (window.HERESE_SITE?.openSearch) {
+        window.HERESE_SITE.openSearch();
+        return;
+      }
+
+      if (this.lenis) {
+        this.lenis.scrollTo('#lifecycle', { duration: 1.6 });
+        return;
+      }
+
+      document.getElementById('lifecycle')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
 
   _initForms() {
     // Waitlist form
@@ -509,7 +523,7 @@ class HereseApp {
      ═══════════════════════════════════════════════ */
 
   _initCart() {
-    this.cart = [];
+    this.cart = this._loadStoredCart();
     this.shopifyProducts = {};  // Will hold product data from Shopify
     this.shopifyCart = null;    // Shopify cart object
     this.isCheckingOut = false;
@@ -529,16 +543,42 @@ class HereseApp {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') this._closeCart();
     });
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'herese-cart-v1') {
+        this.cart = this._loadStoredCart();
+        this._renderCart();
+      }
+    });
+
+    document.addEventListener('change', (e) => {
+      const packInput = e.target.closest('[data-pack-options] input[type="radio"]');
+      if (!packInput) return;
+
+      const card = packInput.closest('.phase-content');
+      const button = card?.querySelector('.add-to-cart');
+      if (!button) return;
+
+      button.dataset.productPrice = packInput.dataset.packPrice || button.dataset.productPrice || '₹1499';
+      const btnText = button.querySelector('.btn-text');
+      if (btnText) btnText.textContent = `Add to Cart - ${button.dataset.productPrice}`;
+    });
 
     document.addEventListener('click', (e) => {
       if (e.target.closest('.add-to-cart')) {
         const btn = e.target.closest('.add-to-cart');
         const productId = btn.dataset.productId;
         const productName = btn.dataset.productName;
-        const productPrice = btn.dataset.productPrice;
+        const pack = this._getSelectedPack(btn);
+        const cartName = pack.detail ? `${productName} - ${pack.detail}` : productName;
 
         this._ensureProductHydration();
-        this._addToCart({ id: productId, name: productName, price: productPrice });
+        this._addToCart({
+          id: productId,
+          name: cartName,
+          price: pack.price,
+          packLabel: pack.label,
+          packDetail: pack.detail,
+        });
       }
     });
 
@@ -554,7 +594,7 @@ class HereseApp {
   }
 
   /**
-   * Fetch products from Shopify and update displayed prices
+   * Fetch products from Shopify and attach variant IDs without overriding pack pricing.
    */
   async _loadShopifyProducts() {
     try {
@@ -571,21 +611,13 @@ class HereseApp {
         'luna-sync': 'lunasync',
       };
 
-      // Update prices on the page with live Shopify data
       document.querySelectorAll('.add-to-cart').forEach(btn => {
         const productId = btn.dataset.productId;
         const handle = handleMap[productId];
         const shopifyProduct = this.shopifyProducts[handle];
 
         if (shopifyProduct) {
-          const price = shopifyProduct.price;
-          const currency = shopifyProduct.currencyCode === 'INR' ? '₹' : '$';
-          btn.dataset.productPrice = `${currency}${price.toFixed(2)}`;
           btn.dataset.shopifyVariantId = shopifyProduct.variantId;
-          const btnText = btn.querySelector('.btn-text');
-          if (btnText) {
-            btnText.textContent = `Add to Sanctuary — ${currency}${Math.round(price)}`;
-          }
         }
       });
 
@@ -597,6 +629,7 @@ class HereseApp {
 
   _addToCart(product) {
     this.cart.push(product);
+    this._saveStoredCart();
 
     this._renderCart();
 
@@ -724,9 +757,42 @@ class HereseApp {
     }[char]));
   }
 
+  _loadStoredCart() {
+    try {
+      const stored = localStorage.getItem('herese-cart-v1');
+      const parsed = stored ? JSON.parse(stored) : [];
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((item) => item && item.id && item.name && item.price);
+    } catch (err) {
+      console.warn('[HERESE] Could not read stored cart:', err.message);
+      return [];
+    }
+  }
+
+  _saveStoredCart() {
+    try {
+      localStorage.setItem('herese-cart-v1', JSON.stringify(this.cart));
+    } catch (err) {
+      console.warn('[HERESE] Could not save cart:', err.message);
+    }
+  }
+
   _parsePrice(price) {
     const value = parseFloat(String(price).replace(/[^0-9.]/g, ''));
     return Number.isFinite(value) ? value : 0;
+  }
+
+  _formatRupee(value) {
+    return `₹${Math.round(value)}`;
+  }
+
+  _getSelectedPack(button) {
+    const selected = button.closest('.phase-content')?.querySelector('[data-pack-options] input[type="radio"]:checked');
+    return {
+      label: selected?.dataset.packLabel || '14-sachet pack',
+      detail: selected?.dataset.packDetail || '14 sachets',
+      price: selected?.dataset.packPrice || button.dataset.productPrice || '₹1499',
+    };
   }
 
   _syncCartMeta(total = 0) {
@@ -754,8 +820,8 @@ class HereseApp {
     const totalEl = document.getElementById('total-amount');
 
     if (this.cart.length === 0) {
-      itemsContainer.innerHTML = '<p class="empty-msg">Your cart is as light as a breeze. Add some botanical magic.</p>';
-      totalEl.textContent = '$0.00';
+      itemsContainer.innerHTML = '<p class="empty-msg">Your cart is empty. Add a craving ritual.</p>';
+      totalEl.textContent = '₹0';
       this._syncCartMeta(0);
       return;
     }
@@ -771,13 +837,14 @@ class HereseApp {
     `).join('');
 
     const total = this.cart.reduce((sum, item) => sum + this._parsePrice(item.price), 0);
-    totalEl.textContent = `$${total.toFixed(2)}`;
+    totalEl.textContent = this._formatRupee(total);
     this._syncCartMeta(total);
 
     itemsContainer.querySelectorAll('.remove-item').forEach(btn => {
       btn.addEventListener('click', () => {
         const index = parseInt(btn.dataset.index);
         this.cart.splice(index, 1);
+        this._saveStoredCart();
         this._renderCart();
       });
     });

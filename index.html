@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HERESE &mdash; For Every Stage | Women's Wellness</title>
   <meta name="description"
-    content="HERESE is the women's wellness sanctuary we built for every stage: natural, lifecycle-focused botanical rituals designed for our biology." />
+    content="HERESE makes women's wellness drink mixes that satisfy familiar cravings while supporting what the body may actually need in each phase." />
   <meta name="keywords"
     content="women's wellness, botanical supplements, natural hormonal support, PCOS, menopause, perimenopause, period care" />
   <meta name="theme-color" content="#0E0A12" />
@@ -14,7 +14,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="HERESE &mdash; For Every Stage" />
-  <meta property="og:description" content="The world wasn't built for our biology. So we built a sanctuary for every stage." />
+  <meta property="og:description" content="Craving-led wellness drinks for every stage of a woman's body." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/herese-ritual-later-stages.png" />
   <meta property="og:image:alt" content="HERESE women's wellness branding and botanical ritual packaging" />
@@ -32,7 +32,7 @@
   <link rel="preload" as="image" href="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/index.css?v=perf-mobile-20260601a" />
+  <link rel="stylesheet" href="css/index.css?v=craving-packs-20260601a" />
 
   <!-- Import Map for ES Modules -->
   <script type="importmap">
@@ -46,7 +46,7 @@
     }
   }
   </script>
-  <link rel="modulepreload" href="js/main.js?v=scroll3d-smooth-20260601a" />
+  <link rel="modulepreload" href="js/main.js?v=craving-packs-20260601a" />
   <link rel="modulepreload" href="js/SceneManager.js?v=scroll3d-smooth-20260601a" />
 </head>
 
@@ -56,7 +56,7 @@
   <canvas id="sanctuary-canvas"></canvas>
 
   <!-- ═══════════════ NAVIGATION ═══════════════ -->
-  <nav id="main-nav" class="main-nav" aria-label="Primary" style="opacity: 0; pointer-events: none;">
+  <nav id="main-nav" class="main-nav" aria-label="Primary">
     <a class="nav-logo" href="#hero" aria-label="HERESE home">
       <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="nav-logo-img" width="625" height="191" decoding="async" fetchpriority="high" />
     </a>
@@ -67,6 +67,9 @@
       <a href="#waitlist">Waitlist</a>
     </div>
     <div class="nav-actions">
+      <a id="search-btn" class="nav-icon-btn search-btn" href="#lifecycle" aria-label="Search products">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+      </a>
       <button id="cart-btn" class="cart-btn" type="button" aria-label="Open cart" aria-haspopup="dialog"
         aria-controls="cart-drawer" aria-expanded="false">
         <span class="cart-icon" aria-hidden="true">🛒</span>
@@ -85,12 +88,12 @@
         <button id="close-cart" class="close-btn" type="button" aria-label="Close cart">&times;</button>
       </div>
       <div id="cart-items" class="cart-items">
-        <p class="empty-msg">Your cart is as light as a breeze. Add some botanical magic.</p>
+        <p class="empty-msg">Your cart is empty. Add a craving ritual.</p>
       </div>
       <div class="cart-footer">
         <div class="cart-total">
           <span>Total</span>
-          <span id="total-amount" aria-live="polite">$0.00</span>
+          <span id="total-amount" aria-live="polite">₹0</span>
         </div>
         <button id="checkout-btn" class="btn-liquid btn-primary full-width" type="button" disabled aria-disabled="true">
           <span class="btn-text">Proceed to Checkout</span>
@@ -101,69 +104,50 @@
     </div>
   </div>
 
-  <!-- ═══════════════ ENTRANCE OVERLAY ═══════════════ -->
-  <div id="entrance-overlay" class="entrance-overlay">
-    <div class="entrance-content">
-      <div class="entrance-logo">
-        <img src="assets/herese_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="logo-img" width="880" height="766" decoding="async" fetchpriority="high" />
-      </div>
-      <p class="entrance-tagline">For every stage of you</p>
-      <button id="enter-btn" class="btn-liquid enter-btn" type="button">
-        <span class="btn-text">Enter Your Sanctuary</span>
-        <span class="btn-shimmer"></span>
-      </button>
-      <p class="entrance-note">Best experienced with sound on 🎵</p>
-    </div>
-  </div>
-
   <!-- ═══════════════ SCROLLABLE CONTENT OVERLAY ═══════════════ -->
-  <div id="scroll-container" class="scroll-container" style="opacity: 0; pointer-events: none;">
+  <div id="scroll-container" class="scroll-container">
 
     <!-- ─── SECTION A: THE HERO ─── -->
     <section id="hero" class="section section--hero" data-section="hero">
       <div class="hero-content">
         <h1 class="hero-headline" id="hero-headline">
-          <span class="line line-1">The world wasn't built</span>
-          <span class="line line-2">for our biology.</span>
-          <span class="line line-3 highlight">So we built a sanctuary</span>
-          <span class="line line-4 highlight">for every stage.</span>
+          <span class="line line-1">Cravings are messages.</span>
+          <span class="line line-2">Your body may be asking</span>
+          <span class="line line-3 highlight">for comfort, minerals,</span>
+          <span class="line line-4 highlight">calm, or steady energy.</span>
         </h1>
         <p class="hero-sub" id="hero-sub">
-          We make natural, lifecycle-focused rituals for every phase of being a woman.
+          HERESE turns familiar cravings into daily wellness drink mixes for periods, PCOS routines, perimenopause, menopause, first periods, and sleep.
         </p>
         <div class="hero-ctas">
           <button id="cta-flow" class="btn-liquid btn-primary" type="button">
-            <span class="btn-text">Enter the Flow</span>
+            <span class="btn-text">Shop by Phase</span>
             <span class="btn-shimmer"></span>
           </button>
           <button id="cta-sisterhood" class="btn-liquid btn-secondary" type="button">
-            <span class="btn-text">Join the Sisterhood</span>
+            <span class="btn-text">Learn the Science</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
-      </div>
-      <div class="scroll-hint" id="scroll-hint">
-        <div class="scroll-hint-line"></div>
-        <span>Scroll to begin your journey</span>
       </div>
     </section>
 
     <!-- ─── SECTION B: THE MANIFESTO ─── -->
     <section id="manifesto" class="section section--manifesto" data-section="manifesto">
       <div class="manifesto-content glass-card">
-        <span class="section-label">The Manifesto</span>
+        <span class="section-label">Why HERESE</span>
         <h2 class="manifesto-headline" id="manifesto-headline">
-          We are not smaller versions of men.
+          We make cravings useful.
         </h2>
         <div class="manifesto-text">
-          <p>For centuries, medicine treated the female body as an afterthought &mdash; a smaller, moodier version of the male
-            default. Clinical trials excluded women. Dosages were calculated without women's bodies in mind. Pain was dismissed as
-            "emotional."</p>
-          <p><strong>We refuse that legacy.</strong></p>
-          <p>We built HERESE from one defiant truth: <em>our bodies are not broken. They are cyclical, dynamic, and brilliant.</em>
-            Every phase &mdash; from first bloom to powerful pause &mdash; deserves botanical intelligence made for that
-            exact chapter.</p>
-          <p>This isn't just a supplement. <strong>It's the sanctuary we wanted when we needed care that understood us.</strong></p>
+          <p>A craving is often not random. Around periods and hormonal shifts, the body can ask for sweetness, chocolate, salt,
+            cooling drinks, or something warm and grounding.</p>
+          <p>Sweet cravings can show up when mood and energy dip. Chocolate cravings are common during periods and can feel like the
+            body is asking for mineral-rich comfort. Salty cravings can appear with bloating, fluid shifts, and changing hydration
+            needs.</p>
+          <p><strong>HERESE starts there.</strong> We keep the taste women already want, then build each drink with herbs, minerals,
+            and phase-specific nutrition.</p>
+          <p>The idea is simple: satisfy the craving, and support the body need behind it.</p>
         </div>
       </div>
     </section>
@@ -172,14 +156,14 @@
     <section id="ritual" class="section section--ritual" data-section="ritual">
       <div class="ritual-content">
         <div class="ritual-copy">
-          <span class="section-label">The Ritual In Hand</span>
-          <h2 class="ritual-title">Blends we made for real life.</h2>
-          <p>Each HERESE blend is portioned into a slim, carry-anywhere ritual sachet: fold, crack, squeeze, and stir into
-            the drink that fits your day.</p>
+          <span class="section-label">How It Works</span>
+          <h2 class="ritual-title">Craving-first wellness drinks.</h2>
+          <p>Pick your phase, choose the flavour your body is already asking for, mix one sachet into water or milk, and drink it
+            like a normal daily ritual.</p>
           <div class="ritual-points">
-            <span class="ritual-point">Single-serve sachets for cleaner dosing</span>
-            <span class="ritual-point">Botanical powders that travel with you</span>
-            <span class="ritual-point">No synthetic binders or artificial sweeteners</span>
+            <span class="ritual-point">Craving-led flavours like cacao, citrus, berry, green mango, almond, and vanilla</span>
+            <span class="ritual-point">Herbs, minerals, and nutrients chosen for each body phase</span>
+            <span class="ritual-point">Trial, 14-sachet, and 28-sachet packs for real routines</span>
           </div>
         </div>
         <div class="ritual-gallery" aria-label="HERESE ritual packaging">
@@ -198,10 +182,10 @@
     <!-- ─── SECTION D: THE 5-PHASE LIFECYCLE ─── -->
     <section id="lifecycle" class="section section--lifecycle" data-section="lifecycle">
       <div class="lifecycle-header">
-        <span class="section-label">The Lifecycle Journey</span>
-        <h2 class="lifecycle-title" id="lifecycle-title">One rhythm. Five phases. No compromise.</h2>
-        <p class="lifecycle-intro">Scroll through the living spectrum of womanhood. We shaped each HERESE formulation for a
-          specific season of the body.</p>
+        <span class="section-label">Shop by Phase</span>
+        <h2 class="lifecycle-title" id="lifecycle-title">Find the craving. Match the need.</h2>
+        <p class="lifecycle-intro">Every HERESE product starts with a familiar craving and pairs it with a functional wellness
+          angle for that stage of the body.</p>
       </div>
 
       <!-- Phase 1: Menarche / BloomBurst -->
@@ -210,8 +194,8 @@
           <div class="phase-badge">01</div>
           <h3 class="phase-name">BloomBurst</h3>
           <p class="phase-stage">Menarche — The First Bloom</p>
-          <p class="phase-desc">When the body awakens for the first time, it needs gentle allies. We made BloomBurst as a
-            tangy berry-rose ritual with Shatavari and Vitamin C to support the first years of cycling with less fear.</p>
+          <p class="phase-desc">Berry-rose for first period days. A sweet, gentle drink for young bodies learning their cycle,
+            with botanicals chosen for early hormonal changes and everyday confidence.</p>
           <div class="phase-ingredients">
             <span class="ingredient-tag">Shatavari</span>
             <span class="ingredient-tag">Rose Petal</span>
@@ -219,8 +203,22 @@
             <span class="ingredient-tag">Beetroot</span>
           </div>
           <p class="phase-flavor">🫐 Tangy Berry-Rose</p>
-          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="bloom-burst" data-product-name="BloomBurst" data-product-price="$32.00">
-            <span class="btn-text">Add to Sanctuary — $32</span>
+          <div class="phase-pack-options" data-pack-options aria-label="Choose BloomBurst pack">
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-bloom-burst" data-pack-label="Trial pack" data-pack-detail="5 sachets" data-pack-price="₹599" />
+              <span>5 sachets</span><strong>₹599</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-bloom-burst" data-pack-label="14-sachet pack" data-pack-detail="14 sachets" data-pack-price="₹1499" checked />
+              <span>14 sachets</span><strong>₹1499</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-bloom-burst" data-pack-label="28-sachet pack" data-pack-detail="28 sachets" data-pack-price="₹2799" />
+              <span>28 sachets</span><strong>₹2799</strong>
+            </label>
+          </div>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" data-product-id="bloom-burst" data-product-name="BloomBurst" data-product-price="₹1499">
+            <span class="btn-text">Add to Cart - ₹1499</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
@@ -236,8 +234,8 @@
           <div class="phase-badge">02</div>
           <h3 class="phase-name">FlowFuel</h3>
           <p class="phase-stage">Periods — The Monthly Reset</p>
-          <p class="phase-desc">Dark velvet comfort for those days. We made FlowFuel as a rich ceremonial cacao blend with
-            Ashoka bark and Nagkesar &mdash; traditional botanical wisdom for comfort, mood support, and deep nourishment.</p>
+          <p class="phase-desc">Cacao for period comfort. When the brain asks for chocolate, FlowFuel gives a rich drink with
+            mineral-minded and botanical support for monthly reset days.</p>
           <div class="phase-ingredients">
             <span class="ingredient-tag">Cacao</span>
             <span class="ingredient-tag">Ashoka Bark</span>
@@ -245,8 +243,22 @@
             <span class="ingredient-tag">Jaggery</span>
           </div>
           <p class="phase-flavor">🍫 Dark Chocolate Silk</p>
-          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="flow-fuel" data-product-name="FlowFuel" data-product-price="$35.00">
-            <span class="btn-text">Add to Sanctuary — $35</span>
+          <div class="phase-pack-options" data-pack-options aria-label="Choose FlowFuel pack">
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-flow-fuel" data-pack-label="Trial pack" data-pack-detail="5 sachets" data-pack-price="₹599" />
+              <span>5 sachets</span><strong>₹599</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-flow-fuel" data-pack-label="14-sachet pack" data-pack-detail="14 sachets" data-pack-price="₹1499" checked />
+              <span>14 sachets</span><strong>₹1499</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-flow-fuel" data-pack-label="28-sachet pack" data-pack-detail="28 sachets" data-pack-price="₹2799" />
+              <span>28 sachets</span><strong>₹2799</strong>
+            </label>
+          </div>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" data-product-id="flow-fuel" data-product-name="FlowFuel" data-product-price="₹1499">
+            <span class="btn-text">Add to Cart - ₹1499</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
@@ -262,8 +274,8 @@
           <div class="phase-badge">03</div>
           <h3 class="phase-name">CoreCorrect</h3>
           <p class="phase-stage">PCOS — The Metabolic Recalibration</p>
-          <p class="phase-desc">PCOS isn't a sentence &mdash; it's a signal. We made CoreCorrect as a crisp green-mango
-            formulation with Kachnar, Methi, and raw Amla to support metabolic rhythm and ovarian wellbeing.</p>
+          <p class="phase-desc">Green-mango for PCOS routines. Tangy and fresh, built for daily support around energy, cravings,
+            and metabolic rhythm.</p>
           <div class="phase-ingredients">
             <span class="ingredient-tag">Kachnar Bark</span>
             <span class="ingredient-tag">Methi</span>
@@ -271,8 +283,22 @@
             <span class="ingredient-tag">Amla</span>
           </div>
           <p class="phase-flavor">🥭 Crisp Green-Mango Zest</p>
-          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="core-correct" data-product-name="CoreCorrect" data-product-price="$38.00">
-            <span class="btn-text">Add to Sanctuary — $38</span>
+          <div class="phase-pack-options" data-pack-options aria-label="Choose CoreCorrect pack">
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-core-correct" data-pack-label="Trial pack" data-pack-detail="5 sachets" data-pack-price="₹599" />
+              <span>5 sachets</span><strong>₹599</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-core-correct" data-pack-label="14-sachet pack" data-pack-detail="14 sachets" data-pack-price="₹1499" checked />
+              <span>14 sachets</span><strong>₹1499</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-core-correct" data-pack-label="28-sachet pack" data-pack-detail="28 sachets" data-pack-price="₹2799" />
+              <span>28 sachets</span><strong>₹2799</strong>
+            </label>
+          </div>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" data-product-id="core-correct" data-product-name="CoreCorrect" data-product-price="₹1499">
+            <span class="btn-text">Add to Cart - ₹1499</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
@@ -288,8 +314,8 @@
           <div class="phase-badge">04</div>
           <h3 class="phase-name">Pause.</h3>
           <p class="phase-stage">Perimenopause — The Great Transition</p>
-          <p class="phase-desc">When the body begins its next great conversation, we made Pause. for cool,
-            citrus-infused clarity. Shatavari, Ashwagandha, and Mulethi support comfort, mood, and bone-health routines.</p>
+          <p class="phase-desc">Cooling citrus for perimenopause. A refreshing drink for heat, mood shifts, and changing
+            routines, with botanicals for steady daily support.</p>
           <div class="phase-ingredients">
             <span class="ingredient-tag">Shatavari</span>
             <span class="ingredient-tag">Ashwagandha</span>
@@ -297,8 +323,22 @@
             <span class="ingredient-tag">Lemon Peel</span>
           </div>
           <p class="phase-flavor">🍋 Cool Citrus Mist</p>
-          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="shift-steady" data-product-name="Pause." data-product-price="$42.00">
-            <span class="btn-text">Add to Sanctuary — $42</span>
+          <div class="phase-pack-options" data-pack-options aria-label="Choose Pause pack">
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-shift-steady" data-pack-label="Trial pack" data-pack-detail="5 sachets" data-pack-price="₹599" />
+              <span>5 sachets</span><strong>₹599</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-shift-steady" data-pack-label="14-sachet pack" data-pack-detail="14 sachets" data-pack-price="₹1499" checked />
+              <span>14 sachets</span><strong>₹1499</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-shift-steady" data-pack-label="28-sachet pack" data-pack-detail="28 sachets" data-pack-price="₹2799" />
+              <span>28 sachets</span><strong>₹2799</strong>
+            </label>
+          </div>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" data-product-id="shift-steady" data-product-name="Pause." data-product-price="₹1499">
+            <span class="btn-text">Add to Cart - ₹1499</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
@@ -314,8 +354,8 @@
           <div class="phase-badge">05</div>
           <h3 class="phase-name">PausePrime</h3>
           <p class="phase-stage">Menopause — The Golden Sovereignty</p>
-          <p class="phase-desc">This is not an ending &mdash; it's a coronation. We made PausePrime as a warm golden almond-milk
-            elixir with Saffron, Cardamom, and Ashwagandha for strength, clarity, and the deep rest you've earned.</p>
+          <p class="phase-desc">Golden almond for menopause. Warm, creamy comfort with botanicals chosen for strength, rest,
+            and mature-phase nourishment.</p>
           <div class="phase-ingredients">
             <span class="ingredient-tag">Saffron</span>
             <span class="ingredient-tag">Cardamom</span>
@@ -323,8 +363,22 @@
             <span class="ingredient-tag">Almond</span>
           </div>
           <p class="phase-flavor">✨ Golden Almond-Milk</p>
-          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="pause-prime" data-product-name="PausePrime" data-product-price="$45.00">
-            <span class="btn-text">Add to Sanctuary — $45</span>
+          <div class="phase-pack-options" data-pack-options aria-label="Choose PausePrime pack">
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-pause-prime" data-pack-label="Trial pack" data-pack-detail="5 sachets" data-pack-price="₹599" />
+              <span>5 sachets</span><strong>₹599</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-pause-prime" data-pack-label="14-sachet pack" data-pack-detail="14 sachets" data-pack-price="₹1499" checked />
+              <span>14 sachets</span><strong>₹1499</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-pause-prime" data-pack-label="28-sachet pack" data-pack-detail="28 sachets" data-pack-price="₹2799" />
+              <span>28 sachets</span><strong>₹2799</strong>
+            </label>
+          </div>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" data-product-id="pause-prime" data-product-name="PausePrime" data-product-price="₹1499">
+            <span class="btn-text">Add to Cart - ₹1499</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
@@ -340,8 +394,8 @@
           <div class="phase-badge">✦</div>
           <h3 class="phase-name">LunaSync</h3>
           <p class="phase-stage">The Sleep Latte — Midnight Restoration</p>
-          <p class="phase-desc">For every woman, in every phase. We made LunaSync as a midnight-blue vanilla-nutmeg sleep
-            latte with Ashwagandha, Jatamansi, and warm spices for a softer nightly rhythm.</p>
+          <p class="phase-desc">Creamy vanilla-nutmeg for night-time cravings. A calming sleep latte for winding down when the
+            body needs rest, not another snack.</p>
           <div class="phase-ingredients">
             <span class="ingredient-tag">Ashwagandha</span>
             <span class="ingredient-tag">Jatamansi</span>
@@ -349,8 +403,22 @@
             <span class="ingredient-tag">Nutmeg</span>
           </div>
           <p class="phase-flavor">🌙 Vanilla-Nutmeg Midnight</p>
-          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="luna-sync" data-product-name="LunaSync" data-product-price="$30.00">
-            <span class="btn-text">Add to Sanctuary — $30</span>
+          <div class="phase-pack-options" data-pack-options aria-label="Choose LunaSync pack">
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-luna-sync" data-pack-label="Trial pack" data-pack-detail="5 sachets" data-pack-price="₹599" />
+              <span>5 sachets</span><strong>₹599</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-luna-sync" data-pack-label="14-sachet pack" data-pack-detail="14 sachets" data-pack-price="₹1499" checked />
+              <span>14 sachets</span><strong>₹1499</strong>
+            </label>
+            <label class="phase-pack-option">
+              <input type="radio" name="pack-luna-sync" data-pack-label="28-sachet pack" data-pack-detail="28 sachets" data-pack-price="₹2799" />
+              <span>28 sachets</span><strong>₹2799</strong>
+            </label>
+          </div>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" data-product-id="luna-sync" data-product-name="LunaSync" data-product-price="₹1499">
+            <span class="btn-text">Add to Cart - ₹1499</span>
             <span class="btn-shimmer"></span>
           </button>
         </div>
@@ -365,39 +433,39 @@
     <section id="transparency" class="section section--transparency" data-section="transparency">
       <div class="transparency-header">
         <span class="section-label">The Transparency Lab</span>
-        <h2 class="transparency-title" id="transparency-title">We leave out synthetic binders.<br />We leave out artificial
-          sweeteners.<br /><em>We keep the plant intelligence.</em></h2>
+        <h2 class="transparency-title" id="transparency-title">Real flavours.<br />Useful ingredients.<br /><em>No confusing
+          wellness jargon.</em></h2>
       </div>
       <div class="ingredient-grid" id="ingredient-grid">
         <div class="ingredient-card glass-card" data-ingredient="shatavari">
           <div class="ingredient-visual">🌿</div>
           <h4>Shatavari</h4>
-          <p>We use this revered adaptogenic root for its long relationship with female reproductive vitality.</p>
+          <p>A traditional women's wellness herb used in blends for comfort, balance, and daily routine support.</p>
         </div>
         <div class="ingredient-card glass-card" data-ingredient="ashwagandha">
           <div class="ingredient-visual">🍃</div>
           <h4>Ashwagandha</h4>
-          <p>We choose this ancient stress ally for calm, resilience, and the daily steadiness women deserve.</p>
+          <p>A familiar adaptogen used for calm, stress support, and steadier everyday rituals.</p>
         </div>
         <div class="ingredient-card glass-card" data-ingredient="cacao">
           <div class="ingredient-visual">🍫</div>
           <h4>Ceremonial Cacao</h4>
-          <p>We reach for raw cacao when we want mineral-rich comfort that feels ceremonial, not synthetic.</p>
+          <p>Chocolate comfort with a mineral-rich taste profile, used when period cravings ask for cacao.</p>
         </div>
         <div class="ingredient-card glass-card" data-ingredient="rose">
           <div class="ingredient-visual">🌹</div>
           <h4>Damask Rose</h4>
-          <p>We love these petals for their softness: floral comfort for cramps, mood, and hormonal flux.</p>
+          <p>Soft floral flavour that makes a wellness drink feel gentle, familiar, and easy to sip.</p>
         </div>
         <div class="ingredient-card glass-card" data-ingredient="ashoka">
           <div class="ingredient-visual">🌳</div>
           <h4>Ashoka Bark</h4>
-          <p>We include this bark for its traditional connection to uterine tone and menstrual comfort.</p>
+          <p>A traditional cycle-support herb used in period-focused wellness routines.</p>
         </div>
         <div class="ingredient-card glass-card" data-ingredient="saffron">
           <div class="ingredient-visual">🌾</div>
           <h4>Kashmiri Saffron</h4>
-          <p>We use this precious spice for warmth, mood, clarity, and a sense of quiet luxury.</p>
+          <p>A warm spice used for golden comfort, flavour depth, and a more satisfying drink ritual.</p>
         </div>
       </div>
     </section>
@@ -406,27 +474,27 @@
     <section id="waitlist" class="section section--waitlist" data-section="waitlist">
       <div class="waitlist-content">
         <span class="section-label">The Circle of HERESE</span>
-        <h2 class="waitlist-title" id="waitlist-title">Join our sisterhood.</h2>
-        <p class="waitlist-sub">Add your spark to the mandala. Every woman who joins helps us grow this sanctuary.</p>
+        <h2 class="waitlist-title" id="waitlist-title">Get early access.</h2>
+        <p class="waitlist-sub">Join the list for launch updates, product drops, and simple education on cravings and body phases.</p>
         <div class="waitlist-counter" id="waitlist-counter">
           <span class="counter-number" id="counter-number">14,020</span>
-          <span class="counter-label">Women Reclaiming Their Flow</span>
+          <span class="counter-label">Women Choosing Phase-Based Drinks</span>
         </div>
         <form id="waitlist-form" class="waitlist-form glass-card" aria-labelledby="waitlist-title">
           <div class="form-group">
             <label class="sr-only" for="waitlist-email">Email address</label>
-            <input type="email" id="waitlist-email" placeholder="Your email — your spark ✨" required
+            <input type="email" id="waitlist-email" placeholder="Your email for launch updates" required
               autocomplete="email" name="email" />
             <button type="submit" class="btn-liquid btn-primary">
-              <span class="btn-text">Light Our Spark</span>
+              <span class="btn-text">Join Waitlist</span>
               <span class="btn-shimmer"></span>
             </button>
           </div>
-          <p class="form-note">No spam. Only sanctuary. Unsubscribe anytime.</p>
+          <p class="form-note">No spam. Product updates and useful education only.</p>
         </form>
         <div id="waitlist-success" class="waitlist-success" role="status" aria-live="polite" style="display:none;">
           <div class="success-burst">✨</div>
-          <p>Your spark has joined the mandala.<br /><strong>Welcome to the sisterhood.</strong></p>
+          <p>You are on the list.<br /><strong>We will keep you posted.</strong></p>
         </div>
       </div>
     </section>
@@ -435,9 +503,9 @@
     <section id="gift" class="section section--gift" data-section="gift">
       <div class="gift-content">
         <span class="section-label">Pass the Ritual</span>
-        <h2 class="gift-title" id="gift-title">Care is contagious.</h2>
-        <p class="gift-sub">Know a woman who needs a sanctuary? Send her a free HERESE ritual. Because healing is better
-          together.</p>
+        <h2 class="gift-title" id="gift-title">Share a product recommendation.</h2>
+        <p class="gift-sub">Know someone who keeps craving chocolate during periods, needs a PCOS-friendly daily routine, or wants
+          a calmer bedtime drink? Send her a HERESE recommendation.</p>
         <form id="gift-form" class="gift-form glass-card" aria-labelledby="gift-title">
           <div class="form-group">
             <label class="sr-only" for="gift-name">Recipient name</label>
@@ -446,13 +514,13 @@
             <input type="email" id="gift-email" name="recipient-email" placeholder="Her email" required
               autocomplete="email" />
             <button type="submit" class="btn-liquid btn-accent">
-              <span class="btn-text">Send a Ritual 💌</span>
+              <span class="btn-text">Send Recommendation</span>
               <span class="btn-shimmer"></span>
             </button>
           </div>
         </form>
         <div id="gift-success" class="gift-success" role="status" aria-live="polite" style="display:none;">
-          <p>💫 A HERESE ritual is flying her way. <strong>You just made someone's day.</strong></p>
+          <p>A HERESE recommendation is on its way. <strong>Thank you for sharing it.</strong></p>
         </div>
       </div>
     </section>
@@ -461,33 +529,36 @@
     <section id="testimonials" class="section section--testimonials" data-section="testimonials">
       <div class="testimonials-content">
         <span class="section-label">Real Women. Real Flow.</span>
-        <h2 class="testimonials-title" id="testimonials-title">Voices from the Sisterhood</h2>
+        <h2 class="testimonials-title" id="testimonials-title">How women describe it</h2>
         <div class="testimonial-bubbles" id="testimonial-bubbles">
           <div class="testimonial-bubble glass-card" data-delay="0">
-            <p class="testimonial-text">"After 12 years of being told PCOS was just 'weight gain,' CoreCorrect was the
-              first ritual that addressed the biology behind it, not willpower."</p>
+            <p class="testimonial-text">"CoreCorrect made my daily PCOS routine feel less clinical. I like that it tastes fresh and
+              still feels purposeful."</p>
             <span class="testimonial-author">— Priya, 28, Bengaluru</span>
           </div>
           <div class="testimonial-bubble glass-card" data-delay="0.2">
-            <p class="testimonial-text">"FlowFuel tastes like a hug in a mug. Cramps went from debilitating to
-              manageable in two cycles."</p>
+            <p class="testimonial-text">"FlowFuel helped me understand my chocolate craving differently. It feels like a period
+              drink, not just a sweet snack."</p>
             <span class="testimonial-author">— Aisha, 31, Mumbai</span>
           </div>
           <div class="testimonial-bubble glass-card" data-delay="0.4">
-            <p class="testimonial-text">"At 52, menopause was framed as 'just dealing with it.' PausePrime
-              showed that was a lie. Vibrancy came back."</p>
+            <p class="testimonial-text">"PausePrime feels warm and grown-up. It gives menopause a ritual I actually look forward
+              to."</p>
             <span class="testimonial-author">— Lakshmi, 52, Chennai</span>
           </div>
           <div class="testimonial-bubble glass-card" data-delay="0.6">
-            <p class="testimonial-text">"The BloomBurst ritual sachet was a lifesaver for a young daughter. It helped her embrace her cycle instead of fearing it."</p>
+            <p class="testimonial-text">"BloomBurst made first-period care easier to talk about at home. The flavour feels friendly,
+              not intimidating."</p>
             <span class="testimonial-author">— Kavya, 35, Hyderabad</span>
           </div>
           <div class="testimonial-bubble glass-card" data-delay="0.8">
-            <p class="testimonial-text">"CoreCorrect fits into a real Indian routine. It travels to office, mixes quickly, and still feels serious for PCOS care."</p>
+            <p class="testimonial-text">"The sachets fit into my office bag, mix quickly, and make wellness feel like something I can
+              repeat."</p>
             <span class="testimonial-author">— Rhea, 26, Gurugram</span>
           </div>
           <div class="testimonial-bubble glass-card" data-delay="1.0">
-            <p class="testimonial-text">"Perimenopause can make women feel invisible. Pause. gave this season a ritual that felt gentle, grown-up, and exact."</p>
+            <p class="testimonial-text">"Pause. is cooling and simple. It is the kind of drink I want when my body feels hot, tired,
+              or unsettled."</p>
             <span class="testimonial-author">— Sunita, 48, Jaipur</span>
           </div>
         </div>
@@ -521,7 +592,8 @@
   </div><!-- /scroll-container -->
 
   <!-- ═══════════════ MAIN SCRIPT ═══════════════ -->
-  <script type="module" src="js/main.js?v=scroll3d-smooth-20260601a"></script>
+  <script src="js/site-ui.js?v=craving-packs-20260601a" defer></script>
+  <script type="module" src="js/main.js?v=craving-packs-20260601a"></script>
 </body>
 
 </html>
