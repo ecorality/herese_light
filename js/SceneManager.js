@@ -15,6 +15,7 @@ export class SceneManager {
     this.scrollProgress = 0;
     this.mouse = new THREE.Vector2(0, 0);
     this.targetMouse = new THREE.Vector2(0, 0);
+    this.isMobileRuntime = this._detectMobileRuntime();
 
     this._initRenderer();
     this._initScene();
@@ -22,7 +23,11 @@ export class SceneManager {
     this._initLighting();
     this._initPostProcessing();
     this._initListeners();
-    this.resize();
+    this.resize({ force: true });
+  }
+
+  _detectMobileRuntime() {
+    return window.matchMedia('(max-width: 768px)').matches || window.matchMedia('(pointer: coarse)').matches;
   }
 
   _initRenderer() {
@@ -32,7 +37,7 @@ export class SceneManager {
       alpha: true,
       powerPreference: 'high-performance',
     });
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(this.width, this.height, false);
     this.renderer.setPixelRatio(this._getPixelRatio());
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.95;
@@ -84,15 +89,16 @@ export class SceneManager {
 
     const createMesh = (tex, colorStr, opacityVal, count, scaleX, scaleY) => {
       const geo = new THREE.PlaneGeometry(scaleX, scaleY);
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        color: colorStr,
+        transparent: true,
+        opacity: opacityVal,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+
       for (let i = 0; i < count; i++) {
-        const mat = new THREE.MeshBasicMaterial({
-          map: tex,
-          color: colorStr,
-          transparent: true,
-          opacity: opacityVal,
-          depthWrite: false,
-          side: THREE.DoubleSide
-        });
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 80, (Math.random() - 0.5) * 20 - 5);
         mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
@@ -134,22 +140,27 @@ export class SceneManager {
     const ringGeo = new THREE.TorusGeometry(0.22, 0.025, 8, 24);
     const geometries = [leafGeo, petalGeo, berryGeo, seedGeo, ringGeo];
     const colors = [0x2F6F45, 0x3F8F4A, 0x5FA85D, 0x79B56B, 0x9BCB76, 0xC8E6A0, 0xE1EFCE, 0x1F5E3B];
+    const materialCache = new Map();
 
     for (let i = 0; i < 140; i++) {
       const color = colors[i % colors.length];
-      const mat = new THREE.MeshPhysicalMaterial({
-        color,
-        emissive: color,
-        emissiveIntensity: i % 5 === 0 ? 0.16 : 0.08,
-        transparent: true,
-        opacity: i % 5 === 0 ? 0.42 : 0.32,
-        roughness: 0.72,
-        metalness: 0.04,
-        clearcoat: 0.2,
-        depthWrite: false,
-      });
+      const highlighted = i % 5 === 0;
+      const materialKey = `${color}-${highlighted}`;
+      if (!materialCache.has(materialKey)) {
+        materialCache.set(materialKey, new THREE.MeshPhysicalMaterial({
+          color,
+          emissive: color,
+          emissiveIntensity: highlighted ? 0.16 : 0.08,
+          transparent: true,
+          opacity: highlighted ? 0.42 : 0.32,
+          roughness: 0.72,
+          metalness: 0.04,
+          clearcoat: 0.2,
+          depthWrite: false,
+        }));
+      }
 
-      const mesh = new THREE.Mesh(geometries[i % geometries.length], mat);
+      const mesh = new THREE.Mesh(geometries[i % geometries.length], materialCache.get(materialKey));
       const scale = 0.28 + Math.random() * 0.62;
       mesh.scale.setScalar(scale);
       mesh.position.set(
@@ -207,6 +218,7 @@ export class SceneManager {
 
   _initPostProcessing() {
     this.composer = new EffectComposer(this.renderer);
+    this.composer.setPixelRatio(this._getPixelRatio());
 
     const renderPass = new RenderPass(this.scene, this.camera);
     this.composer.addPass(renderPass);
@@ -221,10 +233,12 @@ export class SceneManager {
   }
 
   _initListeners() {
+    if (this.isMobileRuntime) return;
+
     window.addEventListener('mousemove', (e) => {
       this.targetMouse.x = (e.clientX / this.width) * 2 - 1;
       this.targetMouse.y = -(e.clientY / this.height) * 2 + 1;
-    });
+    }, { passive: true });
   }
 
   /**
@@ -237,9 +251,18 @@ export class SceneManager {
   /**
    * Handle window resize - Self-optimizing for Mobile, 4:3, and Widescreen
    */
-  resize() {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
+  resize({ force = false } = {}) {
+    const nextWidth = window.innerWidth;
+    const nextHeight = window.innerHeight;
+    const widthDelta = Math.abs(nextWidth - this.width);
+    const heightDelta = Math.abs(nextHeight - this.height);
+    const isMobileChromeResize = !force && this.isMobileRuntime && widthDelta < 2 && heightDelta > 0 && heightDelta < 140;
+
+    if (isMobileChromeResize) return false;
+
+    this.isMobileRuntime = this._detectMobileRuntime();
+    this.width = nextWidth;
+    this.height = nextHeight;
     const aspect = this.width / this.height;
     this.camera.aspect = aspect;
 
@@ -262,18 +285,20 @@ export class SceneManager {
 
     this.camera.updateProjectionMatrix();
     this.renderer.setPixelRatio(this._getPixelRatio());
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(this.width, this.height, false);
     this.composer?.setPixelRatio?.(this._getPixelRatio());
     this.composer.setSize(this.width, this.height);
+    return true;
   }
 
   /**
    * Update scroll-driven environment transitions
    */
   updateScroll(progress) {
-    this.scrollProgress = progress;
-
     const clampedProgress = THREE.MathUtils.clamp(progress, 0, 1);
+    if (Math.abs(clampedProgress - this.scrollProgress) < 0.0004) return;
+
+    this.scrollProgress = clampedProgress;
     const scaled = clampedProgress * (this.backgroundStops.length - 1);
     const index = Math.min(Math.floor(scaled), this.backgroundStops.length - 2);
     const localProgress = scaled - index;
@@ -301,7 +326,9 @@ export class SceneManager {
 
     // Animate botanicals
     if (this.botanicals) {
-      this.botanicals.children.forEach(mesh => {
+      const meshes = this.botanicals.children;
+      for (let i = 0; i < meshes.length; i++) {
+        const mesh = meshes[i];
         mesh.position.y += mesh.userData.vy;
         mesh.position.x += mesh.userData.vx + Math.sin(time + mesh.position.y) * 0.005;
         mesh.rotation.x += mesh.userData.rx;
@@ -311,11 +338,13 @@ export class SceneManager {
           mesh.position.y = 40;
           mesh.position.x = (Math.random() - 0.5) * 40;
         }
-      });
+      }
     }
 
     if (this.dimensionalBotanicals) {
-      this.dimensionalBotanicals.children.forEach(mesh => {
+      const meshes = this.dimensionalBotanicals.children;
+      for (let i = 0; i < meshes.length; i++) {
+        const mesh = meshes[i];
         const phase = mesh.userData.phase;
         mesh.position.y += mesh.userData.vy;
         mesh.position.x = mesh.userData.baseX + Math.sin(time * mesh.userData.drift + phase) * 1.4 + this.mouse.x * 0.55;
@@ -329,7 +358,7 @@ export class SceneManager {
           mesh.userData.baseX = (Math.random() - 0.5) * 34;
           mesh.position.z = -16 + Math.random() * 18;
         }
-      });
+      }
     }
 
     this.composer.render();

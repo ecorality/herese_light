@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { SceneManager } from './SceneManager.js?v=herese-png-20260601a';
+import { SceneManager } from './SceneManager.js?v=perf-mobile-20260601a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
 import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=vineline-roots-20260531i';
 import { Mandala } from './scenes/Mandala.js?v=mandala-20260531c';
@@ -21,11 +21,20 @@ class HereseApp {
     this.pinkNoise = null;
     this.audioMuted = false;
     this.clock = new THREE.Clock();
+    this.isMobileRuntime = this._detectMobileRuntime();
+    this._layoutViewport = { width: window.innerWidth, height: window.innerHeight };
+    this._lastScrollProgress = -1;
+    this._renderFrame = 0;
+    this._shopifyHydrationStarted = false;
 
     this._initScene();
     this._initEntrance();
     this._initForms();
     this._initCart();
+  }
+
+  _detectMobileRuntime() {
+    return window.matchMedia('(max-width: 768px)').matches || window.matchMedia('(pointer: coarse)').matches;
   }
 
   /* ═══════════════════════════════════════════════
@@ -50,15 +59,26 @@ class HereseApp {
 
     // Handle responsive canvas and scroll recalculation.
     this._resizeRAF = null;
-    const handleResize = () => {
+    const handleResize = ({ force = false } = {}) => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const widthDelta = Math.abs(width - this._layoutViewport.width);
+      const heightDelta = Math.abs(height - this._layoutViewport.height);
+      const isMobileChromeResize = !force && this.isMobileRuntime && widthDelta < 2 && heightDelta > 0 && heightDelta < 140;
+
+      if (isMobileChromeResize) return;
+
+      this._layoutViewport = { width, height };
+      this.isMobileRuntime = this._detectMobileRuntime();
+
       if (this._resizeRAF) cancelAnimationFrame(this._resizeRAF);
       this._resizeRAF = requestAnimationFrame(() => {
-        this.scene.resize();
-        ScrollTrigger.refresh();
+        const didResize = this.scene.resize({ force });
+        if (didResize !== false && this.isEntered) ScrollTrigger.refresh();
       });
     };
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', () => setTimeout(handleResize, 250));
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(() => handleResize({ force: true }), 300), { passive: true });
   }
 
   /* ═══════════════════════════════════════════════
@@ -102,11 +122,16 @@ class HereseApp {
      ═══════════════════════════════════════════════ */
 
   _initLenis() {
+    const isTouchRuntime = this._detectMobileRuntime();
+
     this.lenis = new Lenis({
-      duration: 1.8,
+      duration: isTouchRuntime ? 1 : 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
-      smoothWheel: true,
+      smoothWheel: !isTouchRuntime,
+      smoothTouch: false,
+      syncTouch: false,
+      touchMultiplier: 1,
     });
 
     // Connect Lenis to GSAP ticker
@@ -459,9 +484,19 @@ class HereseApp {
      ═══════════════════════════════════════════════ */
 
   _animate() {
+    requestAnimationFrame(() => this._animate());
+    if (document.hidden) return;
+
+    this._renderFrame += 1;
     const time = this.clock.getElapsedTime();
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    this.scene.updateScroll(window.scrollY / maxScroll);
+    const scrollProgress = window.scrollY / maxScroll;
+    if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0008) {
+      this.scene.updateScroll(scrollProgress);
+      this._lastScrollProgress = scrollProgress;
+    }
+
+    if (this.isMobileRuntime && this._renderFrame % 2 === 1) return;
 
     // Update 3D scenes
     this.hero.update(time);
@@ -471,8 +506,6 @@ class HereseApp {
 
     // Render
     this.scene.render(time);
-
-    requestAnimationFrame(() => this._animate());
   }
 
   /* ═══════════════════════════════════════════════
@@ -490,7 +523,10 @@ class HereseApp {
     const cartOverlay = document.querySelector('.cart-overlay');
     const checkoutBtn = document.getElementById('checkout-btn');
 
-    cartBtn?.addEventListener('click', () => this._toggleCart());
+    cartBtn?.addEventListener('click', () => {
+      this._ensureProductHydration();
+      this._toggleCart();
+    });
     closeCart?.addEventListener('click', () => this._closeCart());
     cartOverlay?.addEventListener('click', () => this._closeCart());
     checkoutBtn?.addEventListener('click', () => this._handleCheckout());
@@ -505,14 +541,20 @@ class HereseApp {
         const productName = btn.dataset.productName;
         const productPrice = btn.dataset.productPrice;
 
+        this._ensureProductHydration();
         this._addToCart({ id: productId, name: productName, price: productPrice });
       }
     });
 
     this._renderCart();
+  }
 
-    // Fetch live product data from Shopify (prices, variant IDs)
-    this._loadShopifyProducts();
+  _ensureProductHydration() {
+    if (this._shopifyHydrationPromise) return this._shopifyHydrationPromise;
+
+    this._shopifyHydrationStarted = true;
+    this._shopifyHydrationPromise = this._loadShopifyProducts();
+    return this._shopifyHydrationPromise;
   }
 
   /**
@@ -613,6 +655,8 @@ class HereseApp {
     }
 
     try {
+      await this._ensureProductHydration();
+
       // Build line items with Shopify variant IDs
       const handleMap = {
         'bloom-burst': 'bloomburst',

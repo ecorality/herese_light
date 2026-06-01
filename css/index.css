@@ -93,9 +93,12 @@ input:focus-visible {
 
 /* ─── 3D CANVAS ─── */
 #sanctuary-canvas {
+  backface-visibility: hidden;
+  contain: strict;
   position: fixed;
   top: 0;
   left: 0;
+  transform: translateZ(0);
   width: 100vw;
   height: 100vh;
   z-index: 0;
@@ -500,6 +503,7 @@ input:focus-visible {
 }
 
 .ritual-image {
+  backface-visibility: hidden;
   background: rgba(83, 46, 59, 0.05);
   border: 1px solid rgba(83, 46, 59, 0.12);
   border-radius: 20px;
@@ -590,6 +594,7 @@ input:focus-visible {
 .phase-product-floater {
   animation: phaseFloatRight 7.4s ease-in-out infinite;
   aspect-ratio: 4 / 5;
+  backface-visibility: hidden;
   border: 1px solid color-mix(in srgb, var(--phase-color, #BE394F) 34%, rgba(255, 247, 244, 0.35));
   border-radius: 22px;
   box-shadow:
@@ -601,7 +606,7 @@ input:focus-visible {
   overflow: hidden;
   position: relative;
   transform-style: preserve-3d;
-  will-change: transform, filter;
+  will-change: transform;
   z-index: 1;
 }
 

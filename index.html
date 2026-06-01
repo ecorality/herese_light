@@ -10,6 +10,7 @@
   <meta name="keywords"
     content="women's wellness, botanical supplements, natural hormonal support, PCOS, menopause, perimenopause, period care" />
   <meta name="theme-color" content="#0E0A12" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="HERESE &mdash; For Every Stage" />
@@ -21,12 +22,17 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
 
+  <!-- Critical assets -->
+  <link rel="preload" as="image" href="assets/herese_no_bg.png?v=herese-png-20260601a" />
+  <link rel="preload" as="image" href="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" />
+
   <!-- Styles -->
-  <link rel="stylesheet" href="css/index.css?v=phase-floaters-20260601a" />
+  <link rel="stylesheet" href="css/index.css?v=perf-mobile-20260601a" />
 
   <!-- Import Map for ES Modules -->
   <script type="importmap">
@@ -40,6 +46,8 @@
     }
   }
   </script>
+  <link rel="modulepreload" href="js/main.js?v=perf-mobile-20260601a" />
+  <link rel="modulepreload" href="js/SceneManager.js?v=perf-mobile-20260601a" />
 </head>
 
 <body>
@@ -50,7 +58,7 @@
   <!-- ═══════════════ NAVIGATION ═══════════════ -->
   <nav id="main-nav" class="main-nav" aria-label="Primary" style="opacity: 0; pointer-events: none;">
     <a class="nav-logo" href="#hero" aria-label="HERESE home">
-      <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="nav-logo-img" />
+      <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="nav-logo-img" width="625" height="191" decoding="async" fetchpriority="high" />
     </a>
     <div class="nav-links">
       <a href="#hero">Sanctuary</a>
@@ -97,7 +105,7 @@
   <div id="entrance-overlay" class="entrance-overlay">
     <div class="entrance-content">
       <div class="entrance-logo">
-        <img src="assets/herese_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="logo-img" />
+        <img src="assets/herese_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="logo-img" width="880" height="766" decoding="async" fetchpriority="high" />
       </div>
       <p class="entrance-tagline">For every stage of you</p>
       <button id="enter-btn" class="btn-liquid enter-btn" type="button">
@@ -177,11 +185,11 @@
         <div class="ritual-gallery" aria-label="HERESE ritual packaging">
           <figure class="ritual-image ritual-image--primary">
             <img src="assets/herese-ritual-later-stages.png?v=ritual-floaters-20260601a" alt="HERESE Pause, PausePrime, and LunaSync ritual products"
-              loading="lazy" decoding="async" />
+              width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
           </figure>
           <figure class="ritual-image ritual-image--secondary">
             <img src="assets/herese-ritual-early-stages.png?v=ritual-floaters-20260601a"
-              alt="HERESE BloomBurst, FlowFuel, and CoreCorrect ritual products" loading="lazy" decoding="async" />
+              alt="HERESE BloomBurst, FlowFuel, and CoreCorrect ritual products" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
           </figure>
         </div>
       </div>
@@ -218,7 +226,7 @@
         </div>
         <figure class="phase-product-floater phase-product-floater--01" aria-label="BloomBurst product visual">
           <img src="assets/phase-01-bloomburst.png?v=phase-floaters-20260601a"
-            alt="HERESE BloomBurst product box and ritual sachets" loading="lazy" decoding="async" />
+            alt="HERESE BloomBurst product box and ritual sachets" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
         </figure>
       </div>
 
@@ -244,7 +252,7 @@
         </div>
         <figure class="phase-product-floater phase-product-floater--02" aria-label="FlowFuel product visual">
           <img src="assets/phase-02-flowfuel.png?v=phase-floaters-20260601a"
-            alt="HERESE FlowFuel product box and ritual sachets" loading="lazy" decoding="async" />
+            alt="HERESE FlowFuel product box and ritual sachets" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
         </figure>
       </div>
 
@@ -270,7 +278,7 @@
         </div>
         <figure class="phase-product-floater phase-product-floater--03" aria-label="CoreCorrect product visual">
           <img src="assets/phase-03-corecorrect.png?v=phase-floaters-20260601a"
-            alt="HERESE CoreCorrect product box and ritual sachets" loading="lazy" decoding="async" />
+            alt="HERESE CoreCorrect product box and ritual sachets" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
         </figure>
       </div>
 
@@ -296,7 +304,7 @@
         </div>
         <figure class="phase-product-floater phase-product-floater--04" aria-label="Pause product visual">
           <img src="assets/phase-04-pause.png?v=phase-floaters-20260601a"
-            alt="HERESE Pause product box and ritual sachets" loading="lazy" decoding="async" />
+            alt="HERESE Pause product box and ritual sachets" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
         </figure>
       </div>
 
@@ -322,7 +330,7 @@
         </div>
         <figure class="phase-product-floater phase-product-floater--05" aria-label="PausePrime product visual">
           <img src="assets/phase-05-pauseprime.png?v=phase-floaters-20260601a"
-            alt="HERESE PausePrime product box and ritual sachets" loading="lazy" decoding="async" />
+            alt="HERESE PausePrime product box and ritual sachets" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
         </figure>
       </div>
 
@@ -348,7 +356,7 @@
         </div>
         <figure class="phase-product-floater phase-product-floater--06" aria-label="LunaSync product visual">
           <img src="assets/phase-06-lunasync.png?v=phase-floaters-20260601a"
-            alt="HERESE LunaSync product box and ritual sachets" loading="lazy" decoding="async" />
+            alt="HERESE LunaSync product box and ritual sachets" width="1122" height="1402" loading="lazy" decoding="async" fetchpriority="low" />
         </figure>
       </div>
     </section>
@@ -490,7 +498,7 @@
     <footer id="footer" class="section section--footer" data-section="footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="footer-logo-img" />
+          <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="footer-logo-img" width="625" height="191" loading="lazy" decoding="async" fetchpriority="low" />
         </div>
         <div class="footer-links">
           <a href="#manifesto" class="footer-link">Our Story</a>
@@ -513,7 +521,7 @@
   </div><!-- /scroll-container -->
 
   <!-- ═══════════════ MAIN SCRIPT ═══════════════ -->
-  <script type="module" src="js/main.js?v=herese-png-20260601a"></script>
+  <script type="module" src="js/main.js?v=perf-mobile-20260601a"></script>
 </body>
 
 </html>
