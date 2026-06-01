@@ -2010,6 +2010,12 @@ input:focus-visible {
     font-size: clamp(1.85rem, 11.4vw, 2.85rem);
   }
 
+  .hero-headline .line-3,
+  .hero-headline .line-4 {
+    font-size: clamp(1.42rem, 6vw, 1.78rem);
+    line-height: 1.1;
+  }
+
   .hero-sub {
     display: block;
     width: 100%;
