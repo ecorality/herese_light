@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HERESE &mdash; For Every Stage | Women's Wellness</title>
+  <meta name="description"
+    content="HERESE is the women's wellness sanctuary we built for every stage: natural, lifecycle-focused botanical rituals designed for our biology." />
+  <meta name="keywords"
+    content="women's wellness, botanical supplements, natural hormonal support, PCOS, menopause, perimenopause, period care" />
+  <meta name="theme-color" content="#0E0A12" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="HERESE &mdash; For Every Stage" />
+  <meta property="og:description" content="The world wasn't built for our biology. So we built a sanctuary for every stage." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/herese-ritual-later-stages.png" />
+  <meta property="og:image:alt" content="HERESE women's wellness branding and botanical ritual packaging" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/index.css?v=phase-floaters-20260601a" />
+
+  <!-- Import Map for ES Modules -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.7/+esm",
+      "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollTrigger.js/+esm",
+      "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/+esm"
+    }
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- ═══════════════ 3D CANVAS (FIXED BEHIND EVERYTHING) ═══════════════ -->
+  <canvas id="sanctuary-canvas"></canvas>
+
+  <!-- ═══════════════ NAVIGATION ═══════════════ -->
+  <nav id="main-nav" class="main-nav" aria-label="Primary" style="opacity: 0; pointer-events: none;">
+    <a class="nav-logo" href="#hero" aria-label="HERESE home">
+      <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="nav-logo-img" />
+    </a>
+    <div class="nav-links">
+      <a href="#hero">Sanctuary</a>
+      <a href="#manifesto">Manifesto</a>
+      <a href="#lifecycle">Lifecycle</a>
+      <a href="#waitlist">Waitlist</a>
+    </div>
+    <div class="nav-actions">
+      <button id="cart-btn" class="cart-btn" type="button" aria-label="Open cart" aria-haspopup="dialog"
+        aria-controls="cart-drawer" aria-expanded="false">
+        <span class="cart-icon" aria-hidden="true">🛒</span>
+        <span id="cart-count" class="cart-count" aria-live="polite" aria-atomic="true">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ CART DRAWER ═══════════════ -->
+  <div id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title"
+    aria-hidden="true">
+    <div class="cart-overlay" aria-hidden="true"></div>
+    <div class="cart-content glass-card">
+      <div class="cart-header">
+        <h3 id="cart-title">Your Sanctuary Selection</h3>
+        <button id="close-cart" class="close-btn" type="button" aria-label="Close cart">&times;</button>
+      </div>
+      <div id="cart-items" class="cart-items">
+        <p class="empty-msg">Your cart is as light as a breeze. Add some botanical magic.</p>
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total</span>
+          <span id="total-amount" aria-live="polite">$0.00</span>
+        </div>
+        <button id="checkout-btn" class="btn-liquid btn-primary full-width" type="button" disabled aria-disabled="true">
+          <span class="btn-text">Proceed to Checkout</span>
+          <span class="btn-shimmer"></span>
+        </button>
+        <p id="checkout-note" class="cart-note" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ENTRANCE OVERLAY ═══════════════ -->
+  <div id="entrance-overlay" class="entrance-overlay">
+    <div class="entrance-content">
+      <div class="entrance-logo">
+        <img src="assets/herese_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="logo-img" />
+      </div>
+      <p class="entrance-tagline">For every stage of you</p>
+      <button id="enter-btn" class="btn-liquid enter-btn" type="button">
+        <span class="btn-text">Enter Your Sanctuary</span>
+        <span class="btn-shimmer"></span>
+      </button>
+      <p class="entrance-note">Best experienced with sound on 🎵</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SCROLLABLE CONTENT OVERLAY ═══════════════ -->
+  <div id="scroll-container" class="scroll-container" style="opacity: 0; pointer-events: none;">
+
+    <!-- ─── SECTION A: THE HERO ─── -->
+    <section id="hero" class="section section--hero" data-section="hero">
+      <div class="hero-content">
+        <h1 class="hero-headline" id="hero-headline">
+          <span class="line line-1">The world wasn't built</span>
+          <span class="line line-2">for our biology.</span>
+          <span class="line line-3 highlight">So we built a sanctuary</span>
+          <span class="line line-4 highlight">for every stage.</span>
+        </h1>
+        <p class="hero-sub" id="hero-sub">
+          We make natural, lifecycle-focused rituals for every phase of being a woman.
+        </p>
+        <div class="hero-ctas">
+          <button id="cta-flow" class="btn-liquid btn-primary" type="button">
+            <span class="btn-text">Enter the Flow</span>
+            <span class="btn-shimmer"></span>
+          </button>
+          <button id="cta-sisterhood" class="btn-liquid btn-secondary" type="button">
+            <span class="btn-text">Join the Sisterhood</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+      </div>
+      <div class="scroll-hint" id="scroll-hint">
+        <div class="scroll-hint-line"></div>
+        <span>Scroll to begin your journey</span>
+      </div>
+    </section>
+
+    <!-- ─── SECTION B: THE MANIFESTO ─── -->
+    <section id="manifesto" class="section section--manifesto" data-section="manifesto">
+      <div class="manifesto-content glass-card">
+        <span class="section-label">The Manifesto</span>
+        <h2 class="manifesto-headline" id="manifesto-headline">
+          We are not smaller versions of men.
+        </h2>
+        <div class="manifesto-text">
+          <p>For centuries, medicine treated the female body as an afterthought &mdash; a smaller, moodier version of the male
+            default. Clinical trials excluded women. Dosages were calculated without women's bodies in mind. Pain was dismissed as
+            "emotional."</p>
+          <p><strong>We refuse that legacy.</strong></p>
+          <p>We built HERESE from one defiant truth: <em>our bodies are not broken. They are cyclical, dynamic, and brilliant.</em>
+            Every phase &mdash; from first bloom to powerful pause &mdash; deserves botanical intelligence made for that
+            exact chapter.</p>
+          <p>This isn't just a supplement. <strong>It's the sanctuary we wanted when we needed care that understood us.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION C: PRODUCT RITUAL ─── -->
+    <section id="ritual" class="section section--ritual" data-section="ritual">
+      <div class="ritual-content">
+        <div class="ritual-copy">
+          <span class="section-label">The Ritual In Hand</span>
+          <h2 class="ritual-title">Blends we made for real life.</h2>
+          <p>Each HERESE blend is portioned into a slim, carry-anywhere ritual sachet: fold, crack, squeeze, and stir into
+            the drink that fits your day.</p>
+          <div class="ritual-points">
+            <span class="ritual-point">Single-serve sachets for cleaner dosing</span>
+            <span class="ritual-point">Botanical powders that travel with you</span>
+            <span class="ritual-point">No synthetic binders or artificial sweeteners</span>
+          </div>
+        </div>
+        <div class="ritual-gallery" aria-label="HERESE ritual packaging">
+          <figure class="ritual-image ritual-image--primary">
+            <img src="assets/herese-ritual-later-stages.png?v=ritual-floaters-20260601a" alt="HERESE Pause, PausePrime, and LunaSync ritual products"
+              loading="lazy" decoding="async" />
+          </figure>
+          <figure class="ritual-image ritual-image--secondary">
+            <img src="assets/herese-ritual-early-stages.png?v=ritual-floaters-20260601a"
+              alt="HERESE BloomBurst, FlowFuel, and CoreCorrect ritual products" loading="lazy" decoding="async" />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION D: THE 5-PHASE LIFECYCLE ─── -->
+    <section id="lifecycle" class="section section--lifecycle" data-section="lifecycle">
+      <div class="lifecycle-header">
+        <span class="section-label">The Lifecycle Journey</span>
+        <h2 class="lifecycle-title" id="lifecycle-title">One rhythm. Five phases. No compromise.</h2>
+        <p class="lifecycle-intro">Scroll through the living spectrum of womanhood. We shaped each HERESE formulation for a
+          specific season of the body.</p>
+      </div>
+
+      <!-- Phase 1: Menarche / BloomBurst -->
+      <div class="phase-panel" id="phase-menarche" data-phase="menarche">
+        <div class="phase-content glass-card">
+          <div class="phase-badge">01</div>
+          <h3 class="phase-name">BloomBurst</h3>
+          <p class="phase-stage">Menarche — The First Bloom</p>
+          <p class="phase-desc">When the body awakens for the first time, it needs gentle allies. We made BloomBurst as a
+            tangy berry-rose ritual with Shatavari and Vitamin C to support the first years of cycling with less fear.</p>
+          <div class="phase-ingredients">
+            <span class="ingredient-tag">Shatavari</span>
+            <span class="ingredient-tag">Rose Petal</span>
+            <span class="ingredient-tag">Amla</span>
+            <span class="ingredient-tag">Beetroot</span>
+          </div>
+          <p class="phase-flavor">🫐 Tangy Berry-Rose</p>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="bloom-burst" data-product-name="BloomBurst" data-product-price="$32.00">
+            <span class="btn-text">Add to Sanctuary — $32</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+        <figure class="phase-product-floater phase-product-floater--01" aria-label="BloomBurst product visual">
+          <img src="assets/phase-01-bloomburst.png?v=phase-floaters-20260601a"
+            alt="HERESE BloomBurst product box and ritual sachets" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+
+      <!-- Phase 2: Periods / FlowFuel -->
+      <div class="phase-panel" id="phase-periods" data-phase="periods">
+        <div class="phase-content glass-card">
+          <div class="phase-badge">02</div>
+          <h3 class="phase-name">FlowFuel</h3>
+          <p class="phase-stage">Periods — The Monthly Reset</p>
+          <p class="phase-desc">Dark velvet comfort for those days. We made FlowFuel as a rich ceremonial cacao blend with
+            Ashoka bark and Nagkesar &mdash; traditional botanical wisdom for comfort, mood support, and deep nourishment.</p>
+          <div class="phase-ingredients">
+            <span class="ingredient-tag">Cacao</span>
+            <span class="ingredient-tag">Ashoka Bark</span>
+            <span class="ingredient-tag">Nagkesar</span>
+            <span class="ingredient-tag">Jaggery</span>
+          </div>
+          <p class="phase-flavor">🍫 Dark Chocolate Silk</p>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="flow-fuel" data-product-name="FlowFuel" data-product-price="$35.00">
+            <span class="btn-text">Add to Sanctuary — $35</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+        <figure class="phase-product-floater phase-product-floater--02" aria-label="FlowFuel product visual">
+          <img src="assets/phase-02-flowfuel.png?v=phase-floaters-20260601a"
+            alt="HERESE FlowFuel product box and ritual sachets" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+
+      <!-- Phase 3: PCOS / CoreCorrect -->
+      <div class="phase-panel" id="phase-pcos" data-phase="pcos">
+        <div class="phase-content glass-card">
+          <div class="phase-badge">03</div>
+          <h3 class="phase-name">CoreCorrect</h3>
+          <p class="phase-stage">PCOS — The Metabolic Recalibration</p>
+          <p class="phase-desc">PCOS isn't a sentence &mdash; it's a signal. We made CoreCorrect as a crisp green-mango
+            formulation with Kachnar, Methi, and raw Amla to support metabolic rhythm and ovarian wellbeing.</p>
+          <div class="phase-ingredients">
+            <span class="ingredient-tag">Kachnar Bark</span>
+            <span class="ingredient-tag">Methi</span>
+            <span class="ingredient-tag">Kacha Aam</span>
+            <span class="ingredient-tag">Amla</span>
+          </div>
+          <p class="phase-flavor">🥭 Crisp Green-Mango Zest</p>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="core-correct" data-product-name="CoreCorrect" data-product-price="$38.00">
+            <span class="btn-text">Add to Sanctuary — $38</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+        <figure class="phase-product-floater phase-product-floater--03" aria-label="CoreCorrect product visual">
+          <img src="assets/phase-03-corecorrect.png?v=phase-floaters-20260601a"
+            alt="HERESE CoreCorrect product box and ritual sachets" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+
+      <!-- Phase 4: Perimenopause / Pause. -->
+      <div class="phase-panel" id="phase-peri" data-phase="perimenopause">
+        <div class="phase-content glass-card">
+          <div class="phase-badge">04</div>
+          <h3 class="phase-name">Pause.</h3>
+          <p class="phase-stage">Perimenopause — The Great Transition</p>
+          <p class="phase-desc">When the body begins its next great conversation, we made Pause. for cool,
+            citrus-infused clarity. Shatavari, Ashwagandha, and Mulethi support comfort, mood, and bone-health routines.</p>
+          <div class="phase-ingredients">
+            <span class="ingredient-tag">Shatavari</span>
+            <span class="ingredient-tag">Ashwagandha</span>
+            <span class="ingredient-tag">Mulethi</span>
+            <span class="ingredient-tag">Lemon Peel</span>
+          </div>
+          <p class="phase-flavor">🍋 Cool Citrus Mist</p>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="shift-steady" data-product-name="Pause." data-product-price="$42.00">
+            <span class="btn-text">Add to Sanctuary — $42</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+        <figure class="phase-product-floater phase-product-floater--04" aria-label="Pause product visual">
+          <img src="assets/phase-04-pause.png?v=phase-floaters-20260601a"
+            alt="HERESE Pause product box and ritual sachets" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+
+      <!-- Phase 5: Menopause / PausePrime -->
+      <div class="phase-panel" id="phase-meno" data-phase="menopause">
+        <div class="phase-content glass-card">
+          <div class="phase-badge">05</div>
+          <h3 class="phase-name">PausePrime</h3>
+          <p class="phase-stage">Menopause — The Golden Sovereignty</p>
+          <p class="phase-desc">This is not an ending &mdash; it's a coronation. We made PausePrime as a warm golden almond-milk
+            elixir with Saffron, Cardamom, and Ashwagandha for strength, clarity, and the deep rest you've earned.</p>
+          <div class="phase-ingredients">
+            <span class="ingredient-tag">Saffron</span>
+            <span class="ingredient-tag">Cardamom</span>
+            <span class="ingredient-tag">Ashwagandha</span>
+            <span class="ingredient-tag">Almond</span>
+          </div>
+          <p class="phase-flavor">✨ Golden Almond-Milk</p>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="pause-prime" data-product-name="PausePrime" data-product-price="$45.00">
+            <span class="btn-text">Add to Sanctuary — $45</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+        <figure class="phase-product-floater phase-product-floater--05" aria-label="PausePrime product visual">
+          <img src="assets/phase-05-pauseprime.png?v=phase-floaters-20260601a"
+            alt="HERESE PausePrime product box and ritual sachets" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+
+      <!-- Bonus: LunaSync -->
+      <div class="phase-panel" id="phase-luna" data-phase="lunasync">
+        <div class="phase-content glass-card luna-card">
+          <div class="phase-badge">✦</div>
+          <h3 class="phase-name">LunaSync</h3>
+          <p class="phase-stage">The Sleep Latte — Midnight Restoration</p>
+          <p class="phase-desc">For every woman, in every phase. We made LunaSync as a midnight-blue vanilla-nutmeg sleep
+            latte with Ashwagandha, Jatamansi, and warm spices for a softer nightly rhythm.</p>
+          <div class="phase-ingredients">
+            <span class="ingredient-tag">Ashwagandha</span>
+            <span class="ingredient-tag">Jatamansi</span>
+            <span class="ingredient-tag">Vanilla</span>
+            <span class="ingredient-tag">Nutmeg</span>
+          </div>
+          <p class="phase-flavor">🌙 Vanilla-Nutmeg Midnight</p>
+          <button type="button" class="btn-liquid btn-primary add-to-cart" style="margin-top: 1.5rem;" data-product-id="luna-sync" data-product-name="LunaSync" data-product-price="$30.00">
+            <span class="btn-text">Add to Sanctuary — $30</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+        <figure class="phase-product-floater phase-product-floater--06" aria-label="LunaSync product visual">
+          <img src="assets/phase-06-lunasync.png?v=phase-floaters-20260601a"
+            alt="HERESE LunaSync product box and ritual sachets" loading="lazy" decoding="async" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─── SECTION D: THE TRANSPARENCY LAB ─── -->
+    <section id="transparency" class="section section--transparency" data-section="transparency">
+      <div class="transparency-header">
+        <span class="section-label">The Transparency Lab</span>
+        <h2 class="transparency-title" id="transparency-title">We leave out synthetic binders.<br />We leave out artificial
+          sweeteners.<br /><em>We keep the plant intelligence.</em></h2>
+      </div>
+      <div class="ingredient-grid" id="ingredient-grid">
+        <div class="ingredient-card glass-card" data-ingredient="shatavari">
+          <div class="ingredient-visual">🌿</div>
+          <h4>Shatavari</h4>
+          <p>We use this revered adaptogenic root for its long relationship with female reproductive vitality.</p>
+        </div>
+        <div class="ingredient-card glass-card" data-ingredient="ashwagandha">
+          <div class="ingredient-visual">🍃</div>
+          <h4>Ashwagandha</h4>
+          <p>We choose this ancient stress ally for calm, resilience, and the daily steadiness women deserve.</p>
+        </div>
+        <div class="ingredient-card glass-card" data-ingredient="cacao">
+          <div class="ingredient-visual">🍫</div>
+          <h4>Ceremonial Cacao</h4>
+          <p>We reach for raw cacao when we want mineral-rich comfort that feels ceremonial, not synthetic.</p>
+        </div>
+        <div class="ingredient-card glass-card" data-ingredient="rose">
+          <div class="ingredient-visual">🌹</div>
+          <h4>Damask Rose</h4>
+          <p>We love these petals for their softness: floral comfort for cramps, mood, and hormonal flux.</p>
+        </div>
+        <div class="ingredient-card glass-card" data-ingredient="ashoka">
+          <div class="ingredient-visual">🌳</div>
+          <h4>Ashoka Bark</h4>
+          <p>We include this bark for its traditional connection to uterine tone and menstrual comfort.</p>
+        </div>
+        <div class="ingredient-card glass-card" data-ingredient="saffron">
+          <div class="ingredient-visual">🌾</div>
+          <h4>Kashmiri Saffron</h4>
+          <p>We use this precious spice for warmth, mood, clarity, and a sense of quiet luxury.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION E: THE WAITLIST MANDALA ─── -->
+    <section id="waitlist" class="section section--waitlist" data-section="waitlist">
+      <div class="waitlist-content">
+        <span class="section-label">The Circle of HERESE</span>
+        <h2 class="waitlist-title" id="waitlist-title">Join our sisterhood.</h2>
+        <p class="waitlist-sub">Add your spark to the mandala. Every woman who joins helps us grow this sanctuary.</p>
+        <div class="waitlist-counter" id="waitlist-counter">
+          <span class="counter-number" id="counter-number">14,020</span>
+          <span class="counter-label">Women Reclaiming Their Flow</span>
+        </div>
+        <form id="waitlist-form" class="waitlist-form glass-card" aria-labelledby="waitlist-title">
+          <div class="form-group">
+            <label class="sr-only" for="waitlist-email">Email address</label>
+            <input type="email" id="waitlist-email" placeholder="Your email — your spark ✨" required
+              autocomplete="email" name="email" />
+            <button type="submit" class="btn-liquid btn-primary">
+              <span class="btn-text">Light Our Spark</span>
+              <span class="btn-shimmer"></span>
+            </button>
+          </div>
+          <p class="form-note">No spam. Only sanctuary. Unsubscribe anytime.</p>
+        </form>
+        <div id="waitlist-success" class="waitlist-success" role="status" aria-live="polite" style="display:none;">
+          <div class="success-burst">✨</div>
+          <p>Your spark has joined the mandala.<br /><strong>Welcome to the sisterhood.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION F: GIFT A RITUAL ─── -->
+    <section id="gift" class="section section--gift" data-section="gift">
+      <div class="gift-content">
+        <span class="section-label">Pass the Ritual</span>
+        <h2 class="gift-title" id="gift-title">Care is contagious.</h2>
+        <p class="gift-sub">Know a woman who needs a sanctuary? Send her a free HERESE ritual. Because healing is better
+          together.</p>
+        <form id="gift-form" class="gift-form glass-card" aria-labelledby="gift-title">
+          <div class="form-group">
+            <label class="sr-only" for="gift-name">Recipient name</label>
+            <input type="text" id="gift-name" name="recipient-name" placeholder="Her name" required autocomplete="name" />
+            <label class="sr-only" for="gift-email">Recipient email</label>
+            <input type="email" id="gift-email" name="recipient-email" placeholder="Her email" required
+              autocomplete="email" />
+            <button type="submit" class="btn-liquid btn-accent">
+              <span class="btn-text">Send a Ritual 💌</span>
+              <span class="btn-shimmer"></span>
+            </button>
+          </div>
+        </form>
+        <div id="gift-success" class="gift-success" role="status" aria-live="polite" style="display:none;">
+          <p>💫 A HERESE ritual is flying her way. <strong>You just made someone's day.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION G: TESTIMONIALS ─── -->
+    <section id="testimonials" class="section section--testimonials" data-section="testimonials">
+      <div class="testimonials-content">
+        <span class="section-label">Real Women. Real Flow.</span>
+        <h2 class="testimonials-title" id="testimonials-title">Voices from the Sisterhood</h2>
+        <div class="testimonial-bubbles" id="testimonial-bubbles">
+          <div class="testimonial-bubble glass-card" data-delay="0">
+            <p class="testimonial-text">"After 12 years of being told PCOS was just 'weight gain,' CoreCorrect was the
+              first ritual that addressed the biology behind it, not willpower."</p>
+            <span class="testimonial-author">— Priya, 28, Bengaluru</span>
+          </div>
+          <div class="testimonial-bubble glass-card" data-delay="0.2">
+            <p class="testimonial-text">"FlowFuel tastes like a hug in a mug. Cramps went from debilitating to
+              manageable in two cycles."</p>
+            <span class="testimonial-author">— Aisha, 31, Mumbai</span>
+          </div>
+          <div class="testimonial-bubble glass-card" data-delay="0.4">
+            <p class="testimonial-text">"At 52, menopause was framed as 'just dealing with it.' PausePrime
+              showed that was a lie. Vibrancy came back."</p>
+            <span class="testimonial-author">— Lakshmi, 52, Chennai</span>
+          </div>
+          <div class="testimonial-bubble glass-card" data-delay="0.6">
+            <p class="testimonial-text">"The BloomBurst ritual sachet was a lifesaver for a young daughter. It helped her embrace her cycle instead of fearing it."</p>
+            <span class="testimonial-author">— Kavya, 35, Hyderabad</span>
+          </div>
+          <div class="testimonial-bubble glass-card" data-delay="0.8">
+            <p class="testimonial-text">"CoreCorrect fits into a real Indian routine. It travels to office, mixes quickly, and still feels serious for PCOS care."</p>
+            <span class="testimonial-author">— Rhea, 26, Gurugram</span>
+          </div>
+          <div class="testimonial-bubble glass-card" data-delay="1.0">
+            <p class="testimonial-text">"Perimenopause can make women feel invisible. Pause. gave this season a ritual that felt gentle, grown-up, and exact."</p>
+            <span class="testimonial-author">— Sunita, 48, Jaipur</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer id="footer" class="section section--footer" data-section="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="assets/herese_horizontal_no_bg.png?v=herese-png-20260601a" alt="HERESE for every stage" class="footer-logo-img" />
+        </div>
+        <div class="footer-links">
+          <a href="#manifesto" class="footer-link">Our Story</a>
+          <a href="#transparency" class="footer-link">Science</a>
+          <a href="#gift" class="footer-link">Contact</a>
+          <a href="#waitlist" class="footer-link">Waitlist</a>
+        </div>
+        <div class="footer-audio-toggle">
+          <button id="audio-toggle" class="btn-audio" type="button" aria-label="Toggle ambient sound">
+            <span class="audio-icon" aria-hidden="true">🔊</span>
+            <span class="audio-label">Ambient Sound</span>
+          </button>
+        </div>
+        <p class="footer-disclaimer">HERESE is a wellness supplement brand, not medical advice. Consult a qualified
+          clinician before use if you are pregnant, nursing, taking medication, or managing a health condition.</p>
+        <p class="footer-copy">&copy; 2026 HERESE. All rights reserved. Built with care, not compromise.</p>
+      </div>
+    </footer>
+
+  </div><!-- /scroll-container -->
+
+  <!-- ═══════════════ MAIN SCRIPT ═══════════════ -->
+  <script type="module" src="js/main.js?v=herese-png-20260601a"></script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" aria-hidden="true">
+  <defs>
+    <linearGradient id="leaf" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#173f3a" />
+      <stop offset="100%" stop-color="#7f927a" />
+    </linearGradient>
+    <linearGradient id="petal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c8795d" />
+      <stop offset="100%" stop-color="#e8b49e" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(110 112)">
+    <path d="M-76 39 C-47 17 -20 5 0 4 C20 5 47 17 76 39" stroke="#173f3a" stroke-width="5" opacity="0.78" />
+    <path d="M-60 35 C-56 4 -35 -27 -10 -46 C-16 -14 -29 17 -60 35Z" fill="url(#leaf)" stroke="#173f3a" stroke-width="3" />
+    <path d="M60 35 C56 4 35 -27 10 -46 C16 -14 29 17 60 35Z" fill="url(#leaf)" stroke="#173f3a" stroke-width="3" />
+    <path d="M-29 38 C-35 6 -18 -22 -3 -37 C-1 -11 -8 17 -29 38Z" fill="url(#petal)" stroke="#b56c52" stroke-width="3" />
+    <path d="M29 38 C35 6 18 -22 3 -37 C1 -11 8 17 29 38Z" fill="url(#petal)" stroke="#b56c52" stroke-width="3" />
+    <path d="M0 40 C-5 17 -4 0 0 -13 C4 0 5 17 0 40Z" fill="#173f3a" />
+    <circle cx="0" cy="-25" r="7" fill="#173f3a" />
+    <path d="M-30 -20 C-15 -45 -4 -50 0 -50 C4 -50 15 -45 30 -20" stroke="#173f3a" stroke-width="5" />
+    <path d="M-42 -62 L-61 -88 M-24 -70 L-31 -98 M0 -74 L0 -106 M24 -70 L31 -98 M42 -62 L61 -88" stroke="#a8813f" stroke-width="3" opacity="0.86" />
+    <circle cx="0" cy="-62" r="5" fill="#b48246" />
+  </g>
+</svg>

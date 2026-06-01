@@ -1,0 +1,2 @@
+# Redirect /checkout to Shopify
+/checkout  https://checkout.ecorality.com  302
