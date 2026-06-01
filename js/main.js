@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { SceneManager } from './SceneManager.js?v=perf-mobile-20260601a';
+import { SceneManager } from './SceneManager.js?v=scroll3d-smooth-20260601a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
 import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=vineline-roots-20260531i';
 import { Mandala } from './scenes/Mandala.js?v=mandala-20260531c';
@@ -24,7 +24,6 @@ class HereseApp {
     this.isMobileRuntime = this._detectMobileRuntime();
     this._layoutViewport = { width: window.innerWidth, height: window.innerHeight };
     this._lastScrollProgress = -1;
-    this._renderFrame = 0;
     this._shopifyHydrationStarted = false;
 
     this._initScene();
@@ -487,16 +486,13 @@ class HereseApp {
     requestAnimationFrame(() => this._animate());
     if (document.hidden) return;
 
-    this._renderFrame += 1;
     const time = this.clock.getElapsedTime();
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const scrollProgress = window.scrollY / maxScroll;
-    if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0008) {
+    if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0002) {
       this.scene.updateScroll(scrollProgress);
       this._lastScrollProgress = scrollProgress;
     }
-
-    if (this.isMobileRuntime && this._renderFrame % 2 === 1) return;
 
     // Update 3D scenes
     this.hero.update(time);
