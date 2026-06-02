@@ -88,10 +88,14 @@
   }
 
   function lockPageScroll() {
-    if (pageScrollLock) return;
+    if (pageScrollLock) {
+      pageScrollLock.count += 1;
+      return;
+    }
 
     const scrollY = currentScrollY();
     pageScrollLock = {
+      count: 1,
       scrollY,
       htmlOverflow: document.documentElement.style.overflow,
       bodyOverflow: document.body.style.overflow,
@@ -114,6 +118,10 @@
 
   function unlockPageScroll() {
     if (!pageScrollLock) return;
+    if (pageScrollLock.count > 1) {
+      pageScrollLock.count -= 1;
+      return;
+    }
 
     const { scrollY } = pageScrollLock;
     document.documentElement.style.overflow = pageScrollLock.htmlOverflow;
@@ -382,6 +390,9 @@
   window.HERESE_SITE = {
     products,
     href,
+    lockPageScroll,
+    unlockPageScroll,
+    scrollElementByDelta,
     openSearch: null,
     closeSearch: null
   };

@@ -160,6 +160,7 @@ const PRODUCTS = {
 };
 
 let cart = loadStoredCart();
+let cartLastTouchY = 0;
 
 function setText(id, value) {
   const element = document.getElementById(id);
@@ -282,6 +283,44 @@ function renderCart() {
   });
 }
 
+function scrollCartByDelta(target, deltaY) {
+  const cartItems = document.getElementById('cart-items');
+  const scroller = target?.closest?.('.cart-items') || cartItems;
+  const helper = window.HERESE_SITE?.scrollElementByDelta;
+  if (helper) return helper(scroller, deltaY);
+
+  if (!scroller || Math.abs(deltaY) < 1 || scroller.scrollHeight <= scroller.clientHeight + 1) return false;
+  const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+  const nextScroll = Math.max(0, Math.min(maxScroll, scroller.scrollTop + deltaY));
+  const didMove = nextScroll !== scroller.scrollTop;
+  scroller.scrollTop = nextScroll;
+  return didMove;
+}
+
+function initCartScrollContainment() {
+  const cartDrawer = document.getElementById('cart-drawer');
+  if (!cartDrawer) return;
+
+  cartDrawer.addEventListener('wheel', (event) => {
+    if (!cartDrawer.classList.contains('active')) return;
+    scrollCartByDelta(event.target, event.deltaY);
+    event.preventDefault();
+  }, { passive: false });
+
+  cartDrawer.addEventListener('touchstart', (event) => {
+    cartLastTouchY = event.touches?.[0]?.clientY || 0;
+  }, { passive: false });
+
+  cartDrawer.addEventListener('touchmove', (event) => {
+    if (!cartDrawer.classList.contains('active')) return;
+    const currentY = event.touches?.[0]?.clientY || cartLastTouchY;
+    const deltaY = cartLastTouchY - currentY;
+    cartLastTouchY = currentY;
+    scrollCartByDelta(event.target, deltaY);
+    event.preventDefault();
+  }, { passive: false });
+}
+
 function openCart() {
   const cartDrawer = document.getElementById('cart-drawer');
   const cartBtn = document.getElementById('cart-btn');
@@ -289,15 +328,18 @@ function openCart() {
   cartDrawer?.setAttribute('aria-hidden', 'false');
   cartBtn?.setAttribute('aria-expanded', 'true');
   document.body.classList.add('cart-open');
+  window.HERESE_SITE?.lockPageScroll?.();
 }
 
 function closeCart() {
   const cartDrawer = document.getElementById('cart-drawer');
   const cartBtn = document.getElementById('cart-btn');
+  const wasOpen = cartDrawer?.classList.contains('active');
   cartDrawer?.classList.remove('active');
   cartDrawer?.setAttribute('aria-hidden', 'true');
   cartBtn?.setAttribute('aria-expanded', 'false');
   document.body.classList.remove('cart-open');
+  if (wasOpen) window.HERESE_SITE?.unlockPageScroll?.();
 }
 
 function addProductToCart(product) {
@@ -311,6 +353,7 @@ function addProductToCart(product) {
   });
   saveStoredCart();
   renderCart();
+  initCartScrollContainment();
   openCart();
 }
 
