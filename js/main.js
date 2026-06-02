@@ -5,7 +5,7 @@ import Lenis from 'lenis';
 import { SceneManager } from './SceneManager.js?v=tablet-nav-perf-20260602a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
 import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=vineline-roots-20260531i';
-import { Mandala } from './scenes/Mandala.js?v=mandala-between-sections-20260602a';
+import { Mandala } from './scenes/Mandala.js?v=mandala-scroll-smooth-20260602a';
 import { shopify } from './shopify.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -257,24 +257,24 @@ class HereseApp {
     ScrollTrigger.create({
       trigger: '#mandala',
       start: 'top bottom',
-      end: 'bottom top',
+      end: 'bottom bottom',
       scrub: 1.2,
       onUpdate: (self) => {
         const p = self.progress;
-        this.scene.camera.position.y = -45 - p * 7.5;
-        this.scene.camera.position.z = 8.8;
+        this.scene.camera.position.y = -45 - p * 5.5;
+        this.scene.camera.position.z = 8 + p * 0.8;
         this.scene.updateScroll(0.72 + p * 0.1);
       },
     });
 
     ScrollTrigger.create({
       trigger: '#waitlist',
-      start: 'top bottom',
+      start: 'top bottom-=2',
       end: 'top center',
       scrub: 1.5,
       onUpdate: (self) => {
         const p = self.progress;
-        this.scene.camera.position.y = -52.5 - p * 7.5;
+        this.scene.camera.position.y = -50.5 - p * 9.5;
         this.scene.camera.position.z = 8.8;
         this.scene.updateScroll(0.82 + p * 0.1);
       },

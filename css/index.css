@@ -920,7 +920,7 @@ input:focus-visible {
 
 /* ─── WAITLIST ─── */
 .section--mandala {
-  min-height: clamp(58vh, 68vw, 82vh);
+  min-height: clamp(560px, 76vh, 760px);
   padding: 0;
 }
 
