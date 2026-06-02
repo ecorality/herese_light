@@ -74,6 +74,70 @@
     return products.find((product) => product.id === id);
   }
 
+  let pageScrollLock = null;
+
+  function currentScrollY() {
+    return window.scrollY || document.documentElement.scrollTop || 0;
+  }
+
+  function setSmoothScrollPaused(paused) {
+    const lenis = window.HERESE_APP?.lenis;
+    if (!lenis) return;
+    if (paused) lenis.stop?.();
+    else lenis.start?.();
+  }
+
+  function lockPageScroll() {
+    if (pageScrollLock) return;
+
+    const scrollY = currentScrollY();
+    pageScrollLock = {
+      scrollY,
+      htmlOverflow: document.documentElement.style.overflow,
+      bodyOverflow: document.body.style.overflow,
+      bodyPosition: document.body.style.position,
+      bodyTop: document.body.style.top,
+      bodyLeft: document.body.style.left,
+      bodyRight: document.body.style.right,
+      bodyWidth: document.body.style.width
+    };
+
+    setSmoothScrollPaused(true);
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+
+  function unlockPageScroll() {
+    if (!pageScrollLock) return;
+
+    const { scrollY } = pageScrollLock;
+    document.documentElement.style.overflow = pageScrollLock.htmlOverflow;
+    document.body.style.overflow = pageScrollLock.bodyOverflow;
+    document.body.style.position = pageScrollLock.bodyPosition;
+    document.body.style.top = pageScrollLock.bodyTop;
+    document.body.style.left = pageScrollLock.bodyLeft;
+    document.body.style.right = pageScrollLock.bodyRight;
+    document.body.style.width = pageScrollLock.bodyWidth;
+    pageScrollLock = null;
+
+    window.scrollTo(0, scrollY);
+    setSmoothScrollPaused(false);
+  }
+
+  function scrollElementByDelta(element, deltaY) {
+    if (!element || Math.abs(deltaY) < 1 || element.scrollHeight <= element.clientHeight + 1) return false;
+    const maxScroll = element.scrollHeight - element.clientHeight;
+    const nextScroll = Math.max(0, Math.min(maxScroll, element.scrollTop + deltaY));
+    const didMove = nextScroll !== element.scrollTop;
+    element.scrollTop = nextScroll;
+    return didMove;
+  }
+
   function injectMenu() {
     const nav = document.getElementById('main-nav');
     const logo = nav?.querySelector('.nav-logo');
@@ -191,6 +255,8 @@
 
     const input = document.getElementById('site-search-input');
     const results = document.getElementById('site-search-results');
+    const panel = search.querySelector('.site-search-panel');
+    let lastTouchY = 0;
 
     const render = () => {
       const matches = buildSearchResults(input.value);
@@ -207,6 +273,7 @@
       search.classList.add('active');
       search.setAttribute('aria-hidden', 'false');
       document.body.classList.add('search-open');
+      lockPageScroll();
       setTimeout(() => input.focus(), 30);
     };
 
@@ -214,6 +281,28 @@
       search.classList.remove('active');
       search.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('search-open');
+      unlockPageScroll();
+    };
+
+    const containWheel = (event) => {
+      if (!search.classList.contains('active')) return;
+      const scrollTarget = event.target.closest('.site-search-panel') || panel;
+      scrollElementByDelta(scrollTarget, event.deltaY);
+      event.preventDefault();
+    };
+
+    const containTouchStart = (event) => {
+      lastTouchY = event.touches?.[0]?.clientY || 0;
+    };
+
+    const containTouchMove = (event) => {
+      if (!search.classList.contains('active')) return;
+      const currentY = event.touches?.[0]?.clientY || lastTouchY;
+      const deltaY = lastTouchY - currentY;
+      lastTouchY = currentY;
+      const scrollTarget = event.target.closest('.site-search-panel') || panel;
+      scrollElementByDelta(scrollTarget, deltaY);
+      event.preventDefault();
     };
 
     input.addEventListener('input', render);
@@ -226,6 +315,10 @@
     search.querySelectorAll('[data-close-search]').forEach((element) => {
       element.addEventListener('click', closeSearch);
     });
+    panel?.addEventListener('click', (event) => event.stopPropagation());
+    search.addEventListener('wheel', containWheel, { passive: false });
+    search.addEventListener('touchstart', containTouchStart, { passive: false });
+    search.addEventListener('touchmove', containTouchMove, { passive: false });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') closeSearch();
     });

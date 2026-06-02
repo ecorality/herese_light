@@ -25,6 +25,7 @@ class HereseApp {
     this._layoutViewport = { width: window.innerWidth, height: window.innerHeight };
     this._lastScrollProgress = -1;
     this._shopifyHydrationStarted = false;
+    window.HERESE_APP = this;
 
     this._initScene();
     this._initForms();
