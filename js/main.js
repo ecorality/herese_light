@@ -5,7 +5,7 @@ import Lenis from 'lenis';
 import { SceneManager } from './SceneManager.js?v=tablet-nav-perf-20260602a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
 import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=vineline-roots-20260531i';
-import { Mandala } from './scenes/Mandala.js?v=mandala-20260531c';
+import { Mandala } from './scenes/Mandala.js?v=mandala-between-sections-20260602a';
 import { shopify } from './shopify.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -255,14 +255,28 @@ class HereseApp {
 
     // ── Waitlist section: camera descends to mandala ──
     ScrollTrigger.create({
+      trigger: '#mandala',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1.2,
+      onUpdate: (self) => {
+        const p = self.progress;
+        this.scene.camera.position.y = -45 - p * 7.5;
+        this.scene.camera.position.z = 8.8;
+        this.scene.updateScroll(0.72 + p * 0.1);
+      },
+    });
+
+    ScrollTrigger.create({
       trigger: '#waitlist',
       start: 'top bottom',
       end: 'top center',
       scrub: 1.5,
       onUpdate: (self) => {
         const p = self.progress;
-        this.scene.camera.position.y = -45 - p * 15;
-        this.scene.updateScroll(0.7 + p * 0.3);
+        this.scene.camera.position.y = -52.5 - p * 7.5;
+        this.scene.camera.position.z = 8.8;
+        this.scene.updateScroll(0.82 + p * 0.1);
       },
     });
 
@@ -314,13 +328,6 @@ class HereseApp {
     });
 
     // ── Testimonials ──
-    ScrollTrigger.create({
-      trigger: '#testimonials',
-      start: 'top 85%',
-      onEnter: () => { this.mandala.group.visible = false; },
-      onLeaveBack: () => { this.mandala.group.visible = true; },
-    });
-
     const bubbles = document.querySelectorAll('.testimonial-bubble');
     gsap.from(bubbles, {
       scrollTrigger: {
