@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { SceneManager } from './SceneManager.js?v=scroll3d-smooth-20260601a';
+import { SceneManager } from './SceneManager.js?v=tablet-nav-perf-20260602a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
 import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=vineline-roots-20260531i';
 import { Mandala } from './scenes/Mandala.js?v=mandala-20260531c';
@@ -25,6 +25,7 @@ class HereseApp {
     this._layoutViewport = { width: window.innerWidth, height: window.innerHeight };
     this._lastScrollProgress = -1;
     this._shopifyHydrationStarted = false;
+    this._lastRenderedAt = 0;
     window.HERESE_APP = this;
 
     this._initScene();
@@ -502,6 +503,10 @@ class HereseApp {
     if (document.hidden) return;
 
     const time = this.clock.getElapsedTime();
+    const minFrameGap = this.isMobileRuntime ? 1 / 45 : 0;
+    if (minFrameGap && time - this._lastRenderedAt < minFrameGap) return;
+    this._lastRenderedAt = time;
+
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const scrollProgress = window.scrollY / maxScroll;
     if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0002) {

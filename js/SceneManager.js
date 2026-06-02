@@ -30,10 +30,17 @@ export class SceneManager {
     return window.matchMedia('(max-width: 768px)').matches || window.matchMedia('(pointer: coarse)').matches;
   }
 
+  _qualityTier() {
+    const width = window.innerWidth;
+    if (width <= 768) return 'mobile';
+    if (width <= 1180 || window.matchMedia('(pointer: coarse)').matches) return 'tablet';
+    return 'desktop';
+  }
+
   _initRenderer() {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      antialias: true,
+      antialias: this._qualityTier() === 'desktop',
       alpha: true,
       powerPreference: 'high-performance',
     });
@@ -48,9 +55,9 @@ export class SceneManager {
     const dpr = window.devicePixelRatio || 1;
     const width = window.innerWidth;
 
-    if (width <= 480) return Math.min(dpr, 1.15);
-    if (width <= 768) return Math.min(dpr, 1.25);
-    if (width <= 1180) return Math.min(dpr, 1.5);
+    if (width <= 480) return Math.min(dpr, 1);
+    if (width <= 768) return Math.min(dpr, 1.08);
+    if (width <= 1180) return Math.min(dpr, 1.28);
     return Math.min(dpr, 1.75);
   }
 
@@ -112,10 +119,16 @@ export class SceneManager {
       }
     };
 
+    const density = this._qualityTier() === 'mobile'
+      ? 0.48
+      : this._qualityTier() === 'tablet'
+        ? 0.68
+        : 1;
+
     // Leafy green botanicals
-    createMesh(leafTex, 0x2F6F45, 0.32, 110, 0.8, 0.8);
-    createMesh(flowerTex, 0x6FA85D, 0.24, 70, 0.6, 0.6);
-    createMesh(vineTex, 0x9BCB76, 0.26, 80, 0.7, 1.4);
+    createMesh(leafTex, 0x2F6F45, 0.32, Math.round(110 * density), 0.8, 0.8);
+    createMesh(flowerTex, 0x6FA85D, 0.24, Math.round(70 * density), 0.6, 0.6);
+    createMesh(vineTex, 0x9BCB76, 0.26, Math.round(80 * density), 0.7, 1.4);
 
     this.scene.add(this.botanicals);
   }
@@ -142,7 +155,13 @@ export class SceneManager {
     const colors = [0x2F6F45, 0x3F8F4A, 0x5FA85D, 0x79B56B, 0x9BCB76, 0xC8E6A0, 0xE1EFCE, 0x1F5E3B];
     const materialCache = new Map();
 
-    for (let i = 0; i < 140; i++) {
+    const meshCount = this._qualityTier() === 'mobile'
+      ? 64
+      : this._qualityTier() === 'tablet'
+        ? 92
+        : 140;
+
+    for (let i = 0; i < meshCount; i++) {
       const color = colors[i % colors.length];
       const highlighted = i % 5 === 0;
       const materialKey = `${color}-${highlighted}`;

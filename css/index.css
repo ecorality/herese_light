@@ -1694,6 +1694,39 @@ input:focus-visible {
 }
 
 @media (min-width: 769px) and (max-width: 1180px) {
+  .main-nav {
+    gap: clamp(0.55rem, 1.2vw, 0.9rem);
+    min-height: 68px;
+    padding: 0.82rem clamp(0.9rem, 2.1vw, 1.6rem);
+  }
+
+  .nav-logo-img {
+    width: clamp(118px, 15vw, 154px);
+  }
+
+  .nav-links {
+    gap: clamp(0.75rem, 1.75vw, 1.4rem);
+  }
+
+  .nav-links a {
+    font-size: clamp(0.62rem, 1vw, 0.76rem);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links a:hover {
+    letter-spacing: 0.12em;
+  }
+
+  .nav-actions {
+    gap: 0.45rem;
+  }
+
+  .nav-icon-btn,
+  .cart-btn {
+    height: 42px;
+    width: 42px;
+  }
+
   .section--hero {
     min-height: 88svh;
     padding-top: 11vh;
