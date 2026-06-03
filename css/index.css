@@ -1392,7 +1392,9 @@ input:focus-visible {
 .nav-logo-img {
   flex: 0 0 auto;
   height: auto;
-  width: clamp(172px, 17vw, 264px);
+  max-height: 86px;
+  object-fit: contain;
+  width: clamp(170px, 16vw, 232px);
 }
 
 .nav-links {
@@ -2137,7 +2139,7 @@ input:focus-visible {
   .glass-card { padding: 4.5rem; }
   .ritual-title { font-size: 3.8rem; }
   .phase-name { font-size: 3.2rem; }
-  .nav-logo-img { width: 304px; }
+  .nav-logo-img { width: 272px; }
   .nav-links a { font-size: 1rem; }
 }
 
