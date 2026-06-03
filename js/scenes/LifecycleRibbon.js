@@ -8,12 +8,14 @@ export class LifecycleRibbon {
   constructor() {
     this.group = new THREE.Group();
     this.group.name = 'VINELINE';
-    this.group.position.y = -10;
+    this.group.position.y = -8.2;
 
+    this.vinelineOpacity = 0.65;
     this._seed = 1287;
     this.leaves = [];
     this.tendrils = [];
     this.phaseMarkers = [];
+    this.flowerClusters = [];
     this.pollenClouds = [];
 
     this._createMaterials();
@@ -22,9 +24,10 @@ export class LifecycleRibbon {
     this._createCanopy();
     this._createTendrils();
     this._createFoliage();
+    this._createVineBlossoms();
     this._createPhaseBlooms();
     this._createPollenClouds();
-    this._createRootSystem();
+    this._createSoilLayer();
   }
 
   _createMaterials() {
@@ -33,74 +36,93 @@ export class LifecycleRibbon {
 
     this.barkMat = new THREE.MeshPhysicalMaterial({
       color: 0x7D5125,
+      emissive: 0x2A1908,
+      emissiveIntensity: 0.08,
       roughness: 0.82,
       metalness: 0.02,
-      clearcoat: 0.12,
+      clearcoat: 0.18,
+      transparent: true,
+      opacity: this.vinelineOpacity,
+      depthWrite: false,
     });
 
     this.rootMat = new THREE.MeshPhysicalMaterial({
       color: 0x6A421F,
+      emissive: 0x251306,
+      emissiveIntensity: 0.07,
       roughness: 0.9,
       metalness: 0.02,
-      clearcoat: 0.08,
+      clearcoat: 0.14,
+      transparent: true,
+      opacity: this.vinelineOpacity,
+      depthWrite: false,
     });
 
     this.tendrilMat = new THREE.MeshPhysicalMaterial({
-      color: 0x476B2C,
+      color: 0x3F6F2A,
       emissive: 0x253B16,
-      emissiveIntensity: 0.08,
+      emissiveIntensity: 0.13,
       roughness: 0.72,
       metalness: 0.03,
-      clearcoat: 0.18,
+      clearcoat: 0.26,
+      transparent: true,
+      opacity: this.vinelineOpacity,
+      depthWrite: false,
     });
 
     this.leafMats = [
       new THREE.MeshPhysicalMaterial({
         color: 0x2F6F45,
         emissive: 0x142B1B,
-        emissiveIntensity: 0.06,
-        roughness: 0.66,
+        emissiveIntensity: 0.1,
+        roughness: 0.58,
         metalness: 0.03,
-        clearcoat: 0.2,
+        clearcoat: 0.3,
         side: THREE.DoubleSide,
+        transparent: true,
+        opacity: this.vinelineOpacity,
+        depthWrite: false,
       }),
       new THREE.MeshPhysicalMaterial({
         color: 0x6B8E35,
         emissive: 0x263515,
-        emissiveIntensity: 0.06,
-        roughness: 0.7,
+        emissiveIntensity: 0.095,
+        roughness: 0.62,
         metalness: 0.02,
-        clearcoat: 0.16,
+        clearcoat: 0.26,
         side: THREE.DoubleSide,
+        transparent: true,
+        opacity: this.vinelineOpacity,
+        depthWrite: false,
       }),
     ];
   }
 
   _createRibbon() {
     const points = [
-      new THREE.Vector3(-0.18, 0, 0.2),
-      new THREE.Vector3(0.9, -3.2, -0.9),
-      new THREE.Vector3(-0.7, -6.4, 0.9),
-      new THREE.Vector3(1.25, -9.7, -0.35),
-      new THREE.Vector3(-1.05, -13.1, 1.15),
-      new THREE.Vector3(0.75, -16.8, -1.1),
-      new THREE.Vector3(1.6, -20.3, 0.5),
-      new THREE.Vector3(-1.25, -24.2, 0.95),
-      new THREE.Vector3(0.95, -28.1, -0.9),
-      new THREE.Vector3(-0.55, -32.2, 0.65),
-      new THREE.Vector3(0.55, -36.3, -0.35),
+      new THREE.Vector3(-0.24, 0, 0.2),
+      new THREE.Vector3(1.17, -3.2, -0.9),
+      new THREE.Vector3(-0.91, -6.4, 0.9),
+      new THREE.Vector3(1.63, -9.7, -0.35),
+      new THREE.Vector3(-1.37, -13.1, 1.15),
+      new THREE.Vector3(0.98, -16.8, -1.1),
+      new THREE.Vector3(2.08, -20.3, 0.5),
+      new THREE.Vector3(-1.63, -24.2, 0.95),
+      new THREE.Vector3(1.24, -28.1, -0.9),
+      new THREE.Vector3(-0.72, -32.2, 0.65),
+      new THREE.Vector3(0.72, -36.3, -0.35),
       new THREE.Vector3(0, -40.6, 0),
-      new THREE.Vector3(1.05, -45.0, 0.72),
-      new THREE.Vector3(-0.82, -49.4, -0.64),
-      new THREE.Vector3(0.78, -54.2, 0.82),
-      new THREE.Vector3(-0.92, -58.4, -0.3),
+      new THREE.Vector3(1.37, -45.0, 0.72),
+      new THREE.Vector3(-1.07, -49.4, -0.64),
+      new THREE.Vector3(1.01, -54.2, 0.82),
+      new THREE.Vector3(-1.2, -58.4, -0.3),
       new THREE.Vector3(0, -62.4, 0),
     ];
 
     this.curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.42);
 
-    const vineGeo = new THREE.TubeGeometry(this.curve, 420, 0.13, 18, false);
-    const glowGeo = new THREE.TubeGeometry(this.curve, 420, 0.36, 20, false);
+    const vineGeo = new THREE.TubeGeometry(this.curve, 420, 0.145, 20, false);
+    const glowGeo = new THREE.TubeGeometry(this.curve, 420, 0.38, 22, false);
 
     const vertexShader = `
       varying vec2 vUv;
@@ -146,12 +168,12 @@ export class LifecycleRibbon {
         vec3 newLeaf = vec3(0.30, 0.48, 0.18);
 
         vec3 color = mix(rootBark, deepLeaf, smoothstep(0.05, 0.92, t));
-        color = mix(color, warmBark, barkGrain * 0.32);
-        color = mix(color, newLeaf, smoothstep(0.22, 0.75, t) * 0.22);
-        color = mix(color, phaseColor(t), scrollGlow * 0.28);
-        color *= 0.82 + livingPulse * 0.14 + scrollGlow * 0.28;
+        color = mix(color, warmBark, barkGrain * 0.42);
+        color = mix(color, newLeaf, smoothstep(0.22, 0.75, t) * 0.28);
+        color = mix(color, phaseColor(t), scrollGlow * 0.34);
+        color *= 0.74 + livingPulse * 0.2 + scrollGlow * 0.36;
 
-        gl_FragColor = vec4(color, 0.96);
+        gl_FragColor = vec4(color, 0.65);
       }
     `;
 
@@ -182,8 +204,8 @@ export class LifecycleRibbon {
         float scrollGlow = smoothstep(0.24, 0.0, abs(t - uScroll));
         float breath = sin(uTime * 0.8 + t * 8.0) * 0.5 + 0.5;
         vec3 color = mix(vec3(0.55, 0.68, 0.28), phaseColor(t), 0.62 + scrollGlow * 0.34);
-        float alpha = 0.055 + pulse * 0.025 + breath * 0.018 + scrollGlow * 0.24;
-        gl_FragColor = vec4(color, alpha);
+        float alpha = 0.065 + pulse * 0.028 + breath * 0.022 + scrollGlow * 0.26;
+        gl_FragColor = vec4(color, alpha * 0.65);
       }
     `;
 
@@ -198,7 +220,7 @@ export class LifecycleRibbon {
       uniforms: this.ribbonUniforms,
       transparent: true,
       side: THREE.DoubleSide,
-      depthWrite: true,
+      depthWrite: false,
     });
 
     this.glowMat = new THREE.ShaderMaterial({
@@ -224,22 +246,25 @@ export class LifecycleRibbon {
       new THREE.MeshPhysicalMaterial({
         color: 0x8A5F2C,
         emissive: 0x2A1908,
-        emissiveIntensity: 0.05,
-        roughness: 0.78,
+        emissiveIntensity: 0.09,
+        roughness: 0.7,
         metalness: 0.03,
-        clearcoat: 0.12,
+        clearcoat: 0.2,
+        transparent: true,
+        opacity: this.vinelineOpacity,
+        depthWrite: false,
       }),
     ];
 
-    for (let s = 0; s < 3; s++) {
+    for (let s = 0; s < 1; s++) {
       const points = [];
       const phase = (s / 3) * Math.PI * 2;
 
       for (let i = 0; i < 190; i++) {
         const t = i / 189;
         const base = this.curve.getPointAt(t);
-        const wrap = t * Math.PI * 14 + phase;
-        const radius = 0.15 + Math.sin(t * Math.PI * 5 + s) * 0.025;
+        const wrap = t * Math.PI * 10 + phase;
+        const radius = 0.1 + Math.sin(t * Math.PI * 5 + s) * 0.018;
         points.push(new THREE.Vector3(
           base.x + Math.cos(wrap) * radius,
           base.y + Math.sin(wrap * 0.5) * 0.035,
@@ -248,7 +273,7 @@ export class LifecycleRibbon {
       }
 
       const strandCurve = new THREE.CatmullRomCurve3(points);
-      const strandGeo = new THREE.TubeGeometry(strandCurve, 260, 0.035, 8, false);
+      const strandGeo = new THREE.TubeGeometry(strandCurve, 190, 0.024, 7, false);
       this.group.add(new THREE.Mesh(strandGeo, strandMats[s]));
     }
   }
@@ -262,20 +287,26 @@ export class LifecycleRibbon {
     canopy.position.z += 0.2;
     canopy.rotation.set(-0.12, -0.28, 0.08);
 
-    const bloomColors = [0xDC343B, 0xBE394F, 0x8F3D37, 0x9C7E41, 0x6B55A3];
+    const bloomColors = [
+      0xF0A6B8,
+      0x9B79C7,
+      [0xD8A13E, 0xDC343B],
+    ];
     const bloomOffsets = [
-      [0, 0.18, 0.1, 0.92],
-      [-0.5, -0.05, 0.0, 0.56],
-      [0.48, -0.02, -0.06, 0.52],
-      [-0.22, 0.58, -0.08, 0.42],
-      [0.28, 0.48, 0.08, 0.38],
+      [0, 0.58, 0.14, 0.68, 0],
+      [-0.92, -0.08, 0.04, 0.52, -0.26],
+      [0.92, -0.08, 0.04, 0.52, 0.26],
     ];
 
     bloomOffsets.forEach((entry, i) => {
-      const [x, y, z, scale] = entry;
+      const [x, y, z, scale, rotationZ] = entry;
       const flower = this._createFlower(bloomColors[i], scale);
       flower.position.set(x, y, z);
-      flower.rotation.z = (i - 2) * 0.16;
+      flower.rotation.z = rotationZ;
+      flower.renderOrder = 30 + i;
+      flower.traverse(child => {
+        child.renderOrder = 30 + i;
+      });
       canopy.add(flower);
     });
 
@@ -300,7 +331,7 @@ export class LifecycleRibbon {
       new THREE.MeshBasicMaterial({
         color: 0xDC343B,
         transparent: true,
-        opacity: 0.085,
+        opacity: 0.045,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       })
@@ -312,156 +343,87 @@ export class LifecycleRibbon {
     this.group.add(canopy);
   }
 
-  _createRootSystem() {
+  _createSoilLayer() {
     const origin = this.curve.getPointAt(1);
-    const rootGroup = new THREE.Group();
-    rootGroup.name = 'VINELINE dense roots';
+    const soilGroup = new THREE.Group();
+    soilGroup.name = 'VINELINE footer soil';
 
-    const rootHairMat = new THREE.MeshPhysicalMaterial({
-      color: 0x5A3517,
-      roughness: 0.92,
-      metalness: 0.02,
-      clearcoat: 0.04,
+    const soilMat = new THREE.MeshBasicMaterial({
+      color: 0x6A421F,
+      transparent: true,
+      opacity: 0.48,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x3D2412,
+      transparent: true,
+      opacity: 0.36,
+      depthWrite: false,
+      side: THREE.DoubleSide,
     });
 
-    const rootCount = 48;
+    const mound = new THREE.Mesh(new THREE.CircleGeometry(1.45, 64), soilMat);
+    mound.position.set(origin.x, origin.y + 0.02, origin.z - 0.08);
+    mound.scale.set(2.95, 0.5, 1);
+    soilGroup.add(mound);
 
-    for (let i = 0; i < rootCount; i++) {
-      const sign = i % 2 === 0 ? 1 : -1;
-      const fan = i / Math.max(1, rootCount - 1);
-      const spread = 1.25 + (i % 8) * 0.28 + fan * 1.35;
-      const depth = 0.74 + (i % 6) * 0.075 + fan * 0.42;
-      const phase = this._range(0, Math.PI * 2);
-      const points = [];
-
-      for (let j = 0; j < 34; j++) {
-        const a = j / 33;
-        const ease = a * a * (3 - 2 * a);
-        const taperWobble = 1 - a * 0.35;
-        const wobble = Math.sin(a * Math.PI * (2.8 + i * 0.08) + phase) * 0.34 * taperWobble;
-        points.push(new THREE.Vector3(
-          origin.x + sign * (ease * spread + wobble),
-          origin.y - ease * depth - Math.sin(a * Math.PI) * 0.1 - a * a * 0.16,
-          origin.z + Math.cos(a * Math.PI * 1.8 + phase) * (0.26 + a * 0.42)
-        ));
-      }
-
-      const rootCurve = new THREE.CatmullRomCurve3(points);
-      const rootRadius = Math.max(0.028, 0.086 - i * 0.001);
-      const rootGeo = new THREE.TubeGeometry(rootCurve, 86, rootRadius, 9, false);
-      rootGroup.add(new THREE.Mesh(rootGeo, i % 3 === 0 ? rootHairMat : this.rootMat));
-
-      const branchCount = i % 3 === 0 ? 4 : 3;
-      for (let b = 0; b < branchCount; b++) {
-        const t = this._range(0.38, 0.82);
-        const start = rootCurve.getPointAt(t);
-        const branchSign = b % 2 === 0 ? sign : -sign;
-        const branchPoints = [];
-        const branchReach = this._range(0.55, 1.45) * (1 - t * 0.25);
-        const branchDrop = this._range(0.18, 0.48);
-        const branchPhase = this._range(0, Math.PI * 2);
-
-        for (let j = 0; j < 18; j++) {
-          const a = j / 17;
-          const ease = a * a * (3 - 2 * a);
-          branchPoints.push(new THREE.Vector3(
-            start.x + branchSign * (ease * branchReach + Math.sin(a * Math.PI * 2.4 + branchPhase) * 0.13),
-            start.y - ease * branchDrop - Math.sin(a * Math.PI) * 0.045,
-            start.z + Math.cos(a * Math.PI * 2 + branchPhase) * 0.18
-          ));
-        }
-
-        const branchCurve = new THREE.CatmullRomCurve3(branchPoints);
-        const branchGeo = new THREE.TubeGeometry(branchCurve, 30, 0.018 + (i % 4) * 0.002, 6, false);
-        rootGroup.add(new THREE.Mesh(branchGeo, rootHairMat));
-      }
-    }
-
-    const centerRootCount = 30;
-    for (let i = 0; i < centerRootCount; i++) {
-      const side = (i - (centerRootCount - 1) / 2) / ((centerRootCount - 1) / 2);
-      const phase = this._range(0, Math.PI * 2);
-      const depth = this._range(1.0, 1.85);
-      const reach = side * this._range(0.35, 1.05);
-      const points = [];
-
-      for (let j = 0; j < 30; j++) {
-        const a = j / 29;
-        const ease = a * a * (3 - 2 * a);
-        const split = Math.sin(a * Math.PI * 2.2 + phase) * 0.12 * (1 - a * 0.25);
-        points.push(new THREE.Vector3(
-          origin.x + reach * ease + split,
-          origin.y - ease * depth - Math.sin(a * Math.PI) * 0.08 - a * a * 0.18,
-          origin.z + Math.cos(a * Math.PI * 1.4 + phase) * (0.12 + a * 0.22)
-        ));
-      }
-
-      const centerCurve = new THREE.CatmullRomCurve3(points);
-      const centerGeo = new THREE.TubeGeometry(centerCurve, 70, Math.max(0.022, 0.058 - i * 0.0007), 8, false);
-      rootGroup.add(new THREE.Mesh(centerGeo, i % 2 === 0 ? this.rootMat : rootHairMat));
-
-      const feederCount = i % 4 === 0 ? 3 : 2;
-      for (let b = 0; b < feederCount; b++) {
-        const t = this._range(0.46, 0.88);
-        const start = centerCurve.getPointAt(t);
-        const feederSide = (b % 2 === 0 ? 1 : -1) * (side < 0 ? -1 : 1);
-        const feederPoints = [];
-        const feederReach = this._range(0.24, 0.72) * (1 - t * 0.18);
-        const feederDrop = this._range(0.16, 0.42);
-        const feederPhase = this._range(0, Math.PI * 2);
-
-        for (let j = 0; j < 16; j++) {
-          const a = j / 15;
-          const ease = a * a * (3 - 2 * a);
-          feederPoints.push(new THREE.Vector3(
-            start.x + feederSide * (ease * feederReach + Math.sin(a * Math.PI * 2 + feederPhase) * 0.07),
-            start.y - ease * feederDrop,
-            start.z + Math.cos(a * Math.PI * 2 + feederPhase) * 0.12
-          ));
-        }
-
-        const feederCurve = new THREE.CatmullRomCurve3(feederPoints);
-        const feederGeo = new THREE.TubeGeometry(feederCurve, 24, 0.014 + (i % 3) * 0.002, 6, false);
-        rootGroup.add(new THREE.Mesh(feederGeo, rootHairMat));
-      }
-    }
+    const shadow = new THREE.Mesh(new THREE.CircleGeometry(1.25, 48), shadowMat);
+    shadow.position.set(origin.x, origin.y - 0.12, origin.z - 0.1);
+    shadow.scale.set(2.65, 0.36, 1);
+    soilGroup.add(shadow);
 
     const soilGeo = new THREE.BufferGeometry();
     const soilPositions = [];
-    for (let i = 0; i < 1650; i++) {
-      const centerBias = i < 520;
-      const radius = centerBias
-        ? Math.pow(this._rand(), 1.4) * this._range(0.08, 2.2)
-        : Math.pow(this._rand(), 0.62) * this._range(0.25, 5.4);
+    const soilColors = [];
+    const colors = [
+      new THREE.Color(0x4B2C16),
+      new THREE.Color(0x6A421F),
+      new THREE.Color(0x8A5F2C),
+      new THREE.Color(0x9C7E41),
+    ];
+
+    for (let i = 0; i < 1800; i++) {
+      const radius = Math.pow(this._rand(), 0.6) * this._range(0.08, 3.85);
       const angle = this._range(0, Math.PI * 2);
-      const mound = Math.sin(Math.min(1, radius / 5.4) * Math.PI) * 0.24;
+      const moundLift = Math.sin(Math.min(1, radius / 3.85) * Math.PI) * 0.3;
       soilPositions.push(
         origin.x + Math.cos(angle) * radius,
-        origin.y - this._range(0.82, 1.78) + mound,
-        origin.z + Math.sin(angle) * radius * 0.38
+        origin.y - this._range(0.02, 0.54) + moundLift,
+        origin.z + Math.sin(angle) * radius * 0.3 + this._range(-0.1, 0.1)
       );
+
+      const color = colors[i % colors.length];
+      soilColors.push(color.r, color.g, color.b);
     }
+
     soilGeo.setAttribute('position', new THREE.Float32BufferAttribute(soilPositions, 3));
-    const soilMat = new THREE.PointsMaterial({
-      color: 0x5A3517,
-      size: 0.058,
-      transparent: true,
-      opacity: 0.34,
-      depthWrite: false,
-    });
-    rootGroup.add(new THREE.Points(soilGeo, soilMat));
-    this.group.add(rootGroup);
+    soilGeo.setAttribute('color', new THREE.Float32BufferAttribute(soilColors, 3));
+
+    const points = new THREE.Points(
+      soilGeo,
+      new THREE.PointsMaterial({
+        size: 0.078,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.62,
+        depthWrite: false,
+      })
+    );
+    soilGroup.add(points);
+
+    this.group.add(soilGroup);
   }
 
   _createTendrils() {
-    const anchors = [0.1, 0.17, 0.25, 0.33, 0.43, 0.52, 0.61, 0.7, 0.79, 0.88, 0.95];
+    const anchors = [0.08, 0.13, 0.18, 0.24, 0.31, 0.38, 0.46, 0.54, 0.62, 0.7, 0.78, 0.86, 0.93];
 
     anchors.forEach((t, i) => {
       const sign = i % 2 === 0 ? 1 : -1;
       const base = this.curve.getPointAt(t);
-      const curlTurns = 1.35 + (i % 4) * 0.34;
-      const reach = 1.5 + (i % 3) * 0.45;
-      const lift = 1.9 + (i % 4) * 0.35;
+      const curlTurns = 1.28 + (i % 5) * 0.3;
+      const reach = 1.02 + (i % 4) * 0.32;
+      const lift = 1.24 + (i % 5) * 0.22;
       const points = [];
 
       for (let j = 0; j < 58; j++) {
@@ -470,14 +432,14 @@ export class LifecycleRibbon {
         loop = loop * loop * (3 - 2 * loop);
         const angle = a * Math.PI * 2 * curlTurns + i * 0.7;
         points.push(new THREE.Vector3(
-          base.x + sign * (a * reach + Math.sin(angle) * loop * 0.76),
-          base.y + Math.sin(a * Math.PI) * 0.6 - a * lift + Math.cos(angle) * loop * 0.54,
-          base.z + Math.sin(angle + i) * (0.25 + loop * 0.48)
+          base.x + sign * (a * reach + Math.sin(angle) * loop * 0.5),
+          base.y + Math.sin(a * Math.PI) * 0.46 - a * lift + Math.cos(angle) * loop * 0.36,
+          base.z + Math.sin(angle + i) * (0.22 + loop * 0.34)
         ));
       }
 
       const curve = new THREE.CatmullRomCurve3(points);
-      const geo = new THREE.TubeGeometry(curve, 96, 0.032 + (i % 3) * 0.008, 8, false);
+      const geo = new THREE.TubeGeometry(curve, 58, 0.018 + (i % 3) * 0.005, 6, false);
       const mesh = new THREE.Mesh(geo, this.tendrilMat);
       mesh.userData = { phase: i * 0.55, baseScale: 1 };
       this.tendrils.push(mesh);
@@ -493,20 +455,20 @@ export class LifecycleRibbon {
 
     const leafGeo = new THREE.ShapeGeometry(leafShape, 18);
 
-    for (let i = 0; i < 64; i++) {
-      const t = 0.04 + (i / 63) * 0.9 + this._range(-0.008, 0.008);
+    for (let i = 0; i < 210; i++) {
+      const t = 0.03 + (i / 209) * 0.94 + this._range(-0.011, 0.011);
       const point = this.curve.getPointAt(THREE.MathUtils.clamp(t, 0.02, 0.98));
       const tangent = this.curve.getTangentAt(THREE.MathUtils.clamp(t, 0.02, 0.98));
       const sign = i % 2 === 0 ? 1 : -1;
       const leaf = new THREE.Mesh(leafGeo, this.leafMats[i % this.leafMats.length]);
 
       leaf.position.set(
-        point.x + sign * this._range(0.32, 0.82),
+        point.x + sign * this._range(0.22, 1.12),
         point.y + this._range(-0.2, 0.34),
-        point.z + this._range(-0.3, 0.38)
+        point.z + this._range(-0.42, 0.46)
       );
 
-      const scale = this._range(0.28, 0.62) * (i % 7 === 0 ? 1.25 : 1);
+      const scale = this._range(0.2, 0.6) * (i % 9 === 0 ? 1.34 : 1);
       leaf.scale.set(scale * this._range(0.78, 1.2), scale, scale);
       leaf.rotation.set(
         this._range(-0.45, 0.45),
@@ -523,6 +485,57 @@ export class LifecycleRibbon {
       this.leaves.push(leaf);
       this.group.add(leaf);
     }
+  }
+
+  _createVineBlossoms() {
+    const buds = [0.055, 0.08, 0.105, 0.125, 0.15, 0.175, 0.215, 0.245, 0.27, 0.315, 0.345, 0.365, 0.415, 0.445, 0.47, 0.52, 0.545, 0.565, 0.61, 0.635, 0.655, 0.705, 0.725, 0.745, 0.79, 0.815, 0.835, 0.875, 0.915, 0.945];
+    const accentColors = [0xDC343B, 0xBE6F58, 0xD8A13E, 0x6B55A3, 0x9BB56A, 0xF0C9BB];
+
+    const leafShape = new THREE.Shape();
+    leafShape.moveTo(0, 0.52);
+    leafShape.bezierCurveTo(0.38, 0.22, 0.35, -0.34, 0, -0.56);
+    leafShape.bezierCurveTo(-0.35, -0.34, -0.38, 0.22, 0, 0.52);
+    const leafGeo = new THREE.ShapeGeometry(leafShape, 14);
+
+    buds.forEach((t, i) => {
+      const point = this.curve.getPointAt(t);
+      const tangent = this.curve.getTangentAt(t);
+      const sign = i % 2 === 0 ? -1 : 1;
+      const cluster = new THREE.Group();
+      const color = accentColors[i % accentColors.length];
+
+      cluster.position.set(
+        point.x + sign * this._range(0.58, 1.32),
+        point.y + this._range(-0.22, 0.24),
+        point.z + this._range(-0.34, 0.48)
+      );
+      cluster.rotation.set(this._range(-0.18, 0.26), sign * this._range(0.3, 0.74), Math.atan2(tangent.y, tangent.x) + sign * 0.55);
+
+      const blossomCount = 3 + (i % 3);
+      for (let b = 0; b < blossomCount; b++) {
+        const blossom = this._createFlower(color, this._range(0.16, 0.3));
+        blossom.position.set(sign * this._range(0.02, 0.34), this._range(-0.18, 0.2), this._range(-0.08, 0.1));
+        blossom.rotation.set(this._range(-0.28, 0.28), sign * this._range(0.18, 0.42), this._range(-0.45, 0.45));
+        cluster.add(blossom);
+      }
+
+      for (let l = 0; l < 5; l++) {
+        const leaf = new THREE.Mesh(leafGeo, this.leafMats[(i + l) % this.leafMats.length]);
+        leaf.position.set(sign * this._range(0.12, 0.46), this._range(-0.28, 0.22), this._range(-0.12, 0.08));
+        leaf.rotation.set(this._range(-0.32, 0.32), sign * this._range(0.35, 0.8), sign * this._range(0.7, 1.4));
+        leaf.scale.setScalar(this._range(0.22, 0.42));
+        cluster.add(leaf);
+      }
+
+      cluster.userData = {
+        baseY: cluster.position.y,
+        phase: this._range(0, Math.PI * 2),
+        flutter: this._range(0.012, 0.032),
+      };
+
+      this.flowerClusters.push(cluster);
+      this.group.add(cluster);
+    });
   }
 
   _createPhaseBlooms() {
@@ -547,6 +560,9 @@ export class LifecycleRibbon {
         roughness: 0.34,
         metalness: 0.08,
         clearcoat: 0.5,
+        transparent: true,
+        opacity: this.vinelineOpacity,
+        depthWrite: false,
       });
 
       const berryCluster = new THREE.Group();
@@ -562,7 +578,7 @@ export class LifecycleRibbon {
       const glowMat = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.08,
+        opacity: 0.032,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       });
@@ -584,6 +600,7 @@ export class LifecycleRibbon {
 
   _createFlower(color, scale) {
     const group = new THREE.Group();
+    const colors = Array.isArray(color) ? color : [color];
 
     const petalShape = new THREE.Shape();
     petalShape.moveTo(0, 0.34);
@@ -591,19 +608,23 @@ export class LifecycleRibbon {
     petalShape.bezierCurveTo(-0.3, -0.12, -0.26, 0.24, 0, 0.34);
 
     const petalGeo = new THREE.ShapeGeometry(petalShape, 16);
-    const petalMat = new THREE.MeshPhysicalMaterial({
-      color,
-      emissive: color,
-      emissiveIntensity: 0.08,
-      roughness: 0.42,
+    const petalMats = colors.map(petalColor => new THREE.MeshPhysicalMaterial({
+      color: petalColor,
+      emissive: petalColor,
+      emissiveIntensity: 0.12,
+      roughness: 0.34,
       metalness: 0.03,
-      clearcoat: 0.24,
+      clearcoat: 0.34,
       side: THREE.DoubleSide,
-    });
+      transparent: true,
+      opacity: this.vinelineOpacity,
+      depthWrite: false,
+    }));
 
-    for (let i = 0; i < 6; i++) {
-      const angle = (i / 6) * Math.PI * 2;
-      const petal = new THREE.Mesh(petalGeo, petalMat);
+    const petalCount = 7;
+    for (let i = 0; i < petalCount; i++) {
+      const angle = (i / petalCount) * Math.PI * 2;
+      const petal = new THREE.Mesh(petalGeo, petalMats[i % petalMats.length]);
       petal.position.set(Math.cos(angle) * 0.13, Math.sin(angle) * 0.13, 0);
       petal.rotation.z = angle - Math.PI * 0.5;
       petal.scale.setScalar(scale);
@@ -618,6 +639,9 @@ export class LifecycleRibbon {
         emissiveIntensity: 0.16,
         roughness: 0.38,
         clearcoat: 0.36,
+        transparent: true,
+        opacity: this.vinelineOpacity,
+        depthWrite: false,
       })
     );
     center.position.z = 0.02;
@@ -650,7 +674,7 @@ export class LifecycleRibbon {
         color,
         size: 0.07 + (i % 3) * 0.014,
         transparent: true,
-        opacity: 0.46,
+        opacity: 0.18,
         depthWrite: false,
       });
 
@@ -668,7 +692,7 @@ export class LifecycleRibbon {
     this.phaseMarkers.forEach(marker => {
       const distance = Math.abs(marker.t - clamped);
       const active = 1 - THREE.MathUtils.smoothstep(distance, 0.03, 0.16);
-      marker.glow.material.opacity = 0.07 + active * 0.16;
+      marker.glow.material.opacity = 0.028 + active * 0.064;
       marker.group.scale.setScalar(1 + active * 0.22);
     });
   }
@@ -687,6 +711,12 @@ export class LifecycleRibbon {
       marker.group.rotation.z += Math.sin(time * 0.5 + marker.phase) * 0.0016;
     });
 
+    this.flowerClusters.forEach(cluster => {
+      const sway = Math.sin(time * 0.8 + cluster.userData.phase) * cluster.userData.flutter;
+      cluster.position.y = cluster.userData.baseY + sway * 2.1;
+      cluster.rotation.z += sway * 0.012;
+    });
+
     this.tendrils.forEach((tendril, i) => {
       tendril.rotation.z = Math.sin(time * 0.22 + i) * 0.018;
     });
@@ -694,7 +724,7 @@ export class LifecycleRibbon {
     this.pollenClouds.forEach(cloud => {
       cloud.rotation.y += 0.0008;
       cloud.rotation.z = Math.sin(time * 0.2 + cloud.userData.phase) * 0.025;
-      cloud.material.opacity = cloud.userData.baseOpacity + Math.sin(time * 0.8 + cloud.userData.phase) * 0.035;
+      cloud.material.opacity = cloud.userData.baseOpacity + Math.sin(time * 0.8 + cloud.userData.phase) * 0.014;
     });
   }
 

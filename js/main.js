@@ -4,7 +4,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { SceneManager } from './SceneManager.js?v=tablet-nav-perf-20260602a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
-import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=vineline-roots-20260531i';
+import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=herese-final-20260603a';
 import { Mandala } from './scenes/Mandala.js?v=mandala-scroll-smooth-20260602a';
 import { shopify } from './shopify.js';
 
@@ -161,8 +161,8 @@ class HereseApp {
       scrub: 1.5,
       onUpdate: (self) => {
         const p = self.progress;
-        this.hero.group.scale.setScalar(1 - p * 0.6);
-        this.hero.group.position.y = -p * 5;
+        this.hero.group.scale.setScalar(1 - p * 0.5);
+        this.hero.group.position.y = p * 2.6;
         this.scene.camera.position.z = 12 + p * 3;
       },
     });
@@ -182,8 +182,8 @@ class HereseApp {
 
     // ── Lifecycle: scroll-driven camera dive along ribbon ──
     ScrollTrigger.create({
-      trigger: '#manifesto',
-      start: 'top center',
+      trigger: '#lifecycle',
+      start: 'top 85%',
       endTrigger: '#lifecycle',
       end: 'bottom bottom',
       scrub: 2,
@@ -195,7 +195,7 @@ class HereseApp {
         this.scene.camera.position.z = 12 - p * 4;
 
         // Move HeroDroplet up and out of the way
-        this.hero.group.position.y = -5 + p * 30;
+        this.hero.group.position.y = 2.6 + p * 24;
 
         // Update ribbon glow
         this.ribbon.updateScroll(p);
@@ -280,7 +280,7 @@ class HereseApp {
       },
     });
 
-    // Continue the camera down VINELINE so its roots resolve at the page end.
+    // Continue the camera down VINELINE so the footer soil resolves at the page end.
     ScrollTrigger.create({
       trigger: '#gift',
       start: 'top bottom',
@@ -289,7 +289,7 @@ class HereseApp {
       scrub: 1.5,
       onUpdate: (self) => {
         const p = self.progress;
-        this.scene.camera.position.y = -60 - p * 9.25;
+        this.scene.camera.position.y = -60 - p * 6.4;
         this.scene.camera.position.z = 8 + p * 1.1;
         this.ribbon.updateScroll(0.82 + p * 0.18);
         this.scene.updateScroll(0.85 + p * 0.15);
@@ -908,6 +908,12 @@ class HereseApp {
 }
 
 // ── BOOT ──
-window.addEventListener('DOMContentLoaded', () => {
-  new HereseApp();
-});
+const bootHereseApp = () => {
+  if (!window.HERESE_APP) new HereseApp();
+};
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', bootHereseApp, { once: true });
+} else {
+  bootHereseApp();
+}
