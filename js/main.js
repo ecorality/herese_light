@@ -1,14 +1,17 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
-import { SceneManager } from './SceneManager.js?v=tablet-nav-perf-20260602a';
-import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
-import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=text-readability-20260604a';
+import { SceneManager } from './SceneManager.js?v=platform-scroll-perf-20260604a';
+import { HeroDroplet } from './scenes/HeroDroplet.js?v=platform-scroll-perf-20260604a';
+import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=platform-scroll-perf-20260604a';
 import { Mandala } from './scenes/Mandala.js?v=mandala-scroll-smooth-20260602a';
 import { shopify } from './shopify.js';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({
+  ignoreMobileResize: true,
+  limitCallbacks: true,
+});
 
 /**
  * HERESE - For Every Stage
@@ -26,6 +29,11 @@ class HereseApp {
     this._lastScrollProgress = -1;
     this._shopifyHydrationStarted = false;
     this._lastRenderedAt = 0;
+    this._lastAmbientUpdateAt = 0;
+    this._scrollActiveUntil = 0;
+    this._scrollClassTimer = null;
+    this._pageScrollRAF = null;
+    this._boundAnimate = this._animate.bind(this);
     window.HERESE_APP = this;
 
     this._initScene();
@@ -56,6 +64,7 @@ class HereseApp {
     this.scene.add(this.mandala.group);
 
     // Start render loop immediately.
+    this._initScrollPerformanceTracking();
     this._animate();
 
     // Handle responsive canvas and scroll recalculation.
@@ -92,6 +101,7 @@ class HereseApp {
       this._initGSAP();
       this._initAudioToggle();
       this._initSearch();
+      this._initAssetPredecode();
       ScrollTrigger.refresh();
     });
   }
@@ -100,14 +110,22 @@ class HereseApp {
      SMOOTH SCROLL (LENIS)
      ═══════════════════════════════════════════════ */
 
-  _initLenis() {
+  async _initLenis() {
     const isTouchRuntime = this._detectMobileRuntime();
 
+    // Native touch scrolling is more stable than a second scroll pipeline on
+    // iOS, iPadOS, and coarse-pointer devices.
+    if (isTouchRuntime) {
+      this.lenis = null;
+      return;
+    }
+
+    const { default: Lenis } = await import('lenis');
     this.lenis = new Lenis({
-      duration: isTouchRuntime ? 1 : 1.8,
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
-      smoothWheel: !isTouchRuntime,
+      smoothWheel: true,
       smoothTouch: false,
       syncTouch: false,
       touchMultiplier: 1,
@@ -119,7 +137,7 @@ class HereseApp {
     gsap.ticker.add((time) => {
       this.lenis.raf(time * 1000);
     });
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
   }
 
   /* ═══════════════════════════════════════════════
@@ -127,6 +145,9 @@ class HereseApp {
      ═══════════════════════════════════════════════ */
 
   _initGSAP() {
+    const sceneScrub = this.isMobileRuntime ? 0.35 : 0.9;
+    const revealScrub = this.isMobileRuntime ? 0.3 : 0.75;
+
     // ── Hero text reveal ──
     gsap.to('.hero-headline .line', {
       opacity: 1,
@@ -158,7 +179,7 @@ class HereseApp {
       trigger: '#manifesto',
       start: 'top bottom',
       end: 'top center',
-      scrub: 1.5,
+      scrub: sceneScrub,
       onUpdate: (self) => {
         const p = self.progress;
         this.hero.group.scale.setScalar(1 - p * 0.5);
@@ -173,7 +194,7 @@ class HereseApp {
         trigger: '#manifesto',
         start: 'top 70%',
         end: 'top 30%',
-        scrub: 1,
+        scrub: revealScrub,
       },
       opacity: 0,
       y: 60,
@@ -186,7 +207,7 @@ class HereseApp {
       start: 'top bottom',
       endTrigger: '#lifecycle',
       end: 'bottom bottom',
-      scrub: 2,
+      scrub: sceneScrub,
       onUpdate: (self) => {
         const p = self.progress;
 
@@ -217,7 +238,7 @@ class HereseApp {
           trigger: panel,
           start: 'top 75%',
           end: 'top 35%',
-          scrub: 1,
+          scrub: revealScrub,
         },
         opacity: 0,
         x: phaseDrift ? (i % 2 === 0 ? -phaseDrift : phaseDrift) : 0,
@@ -259,7 +280,7 @@ class HereseApp {
       trigger: '#mandala',
       start: 'top bottom',
       end: 'bottom bottom',
-      scrub: 1.2,
+      scrub: sceneScrub,
       onUpdate: (self) => {
         const p = self.progress;
         this.scene.camera.position.y = -45 - p * 5.5;
@@ -272,7 +293,7 @@ class HereseApp {
       trigger: '#waitlist',
       start: 'top bottom-=2',
       end: 'top center',
-      scrub: 1.5,
+      scrub: sceneScrub,
       onUpdate: (self) => {
         const p = self.progress;
         this.scene.camera.position.y = -50.5 - p * 9.5;
@@ -287,7 +308,7 @@ class HereseApp {
       start: 'top bottom',
       endTrigger: '#footer',
       end: 'bottom bottom',
-      scrub: 1.5,
+      scrub: sceneScrub,
       onUpdate: (self) => {
         const p = self.progress;
         this.scene.camera.position.y = -60 - p * 6.4;
@@ -344,11 +365,23 @@ class HereseApp {
 
     // ── CTA buttons scroll behavior ──
     document.getElementById('cta-flow')?.addEventListener('click', () => {
-      this.lenis?.scrollTo('#lifecycle', { duration: 2 });
+      this._scrollTo('#lifecycle', 1.5);
     });
 
     document.getElementById('cta-sisterhood')?.addEventListener('click', () => {
-      this.lenis?.scrollTo('#waitlist', { duration: 2.5 });
+      this._scrollTo('#waitlist', 1.8);
+    });
+  }
+
+  _scrollTo(target, duration = 1.4) {
+    if (this.lenis) {
+      this.lenis.scrollTo(target, { duration });
+      return;
+    }
+
+    document.querySelector(target)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
     });
   }
 
@@ -468,12 +501,57 @@ class HereseApp {
       }
 
       if (this.lenis) {
-        this.lenis.scrollTo('#lifecycle', { duration: 1.6 });
+        this._scrollTo('#lifecycle', 1.3);
         return;
       }
 
-      document.getElementById('lifecycle')?.scrollIntoView({ behavior: 'smooth' });
+      this._scrollTo('#lifecycle', 1.3);
     });
+  }
+
+  _initAssetPredecode() {
+    if (!('IntersectionObserver' in window)) return;
+
+    const rootMargin = this.isMobileRuntime ? '1100px 0px' : '1800px 0px';
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const image = entry.target;
+        image.decode?.().catch(() => {});
+        observer.unobserve(image);
+      });
+    }, { rootMargin });
+
+    document.querySelectorAll('img[loading="lazy"]').forEach((image) => observer.observe(image));
+  }
+
+  _initScrollPerformanceTracking() {
+    const syncPageProgress = () => {
+      this._pageScrollRAF = null;
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const scrollProgress = window.scrollY / maxScroll;
+      if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0002) {
+        this.scene.updateScroll(scrollProgress);
+        this._lastScrollProgress = scrollProgress;
+      }
+    };
+
+    const markScrolling = () => {
+      this._scrollActiveUntil = performance.now() + 180;
+      document.body.classList.add('is-scrolling');
+
+      if (!this._pageScrollRAF) {
+        this._pageScrollRAF = requestAnimationFrame(syncPageProgress);
+      }
+
+      clearTimeout(this._scrollClassTimer);
+      this._scrollClassTimer = setTimeout(() => {
+        document.body.classList.remove('is-scrolling');
+      }, 190);
+    };
+
+    window.addEventListener('scroll', markScrolling, { passive: true });
+    requestAnimationFrame(syncPageProgress);
   }
 
   _initForms() {
@@ -506,30 +584,42 @@ class HereseApp {
      RENDER LOOP
      ═══════════════════════════════════════════════ */
 
-  _animate() {
-    requestAnimationFrame(() => this._animate());
+  _animate(now = performance.now()) {
+    requestAnimationFrame(this._boundAnimate);
     if (document.hidden) return;
 
-    const time = this.clock.getElapsedTime();
-    const minFrameGap = this.isMobileRuntime ? 1 / 45 : 0;
-    if (minFrameGap && time - this._lastRenderedAt < minFrameGap) return;
-    this._lastRenderedAt = time;
+    const qualityTier = this.scene.qualityTier;
+    const isScrolling = now < this._scrollActiveUntil;
+    const targetFps = qualityTier === 'mobile'
+      ? (isScrolling ? 45 : 30)
+      : qualityTier === 'tablet'
+        ? (isScrolling ? 50 : 38)
+        : (isScrolling ? 60 : 50);
+    const minFrameGap = 1000 / targetFps;
+    if (now - this._lastRenderedAt < minFrameGap) return;
+    this._lastRenderedAt = now;
 
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const scrollProgress = window.scrollY / maxScroll;
-    if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0002) {
-      this.scene.updateScroll(scrollProgress);
-      this._lastScrollProgress = scrollProgress;
+    const time = this.clock.getElapsedTime();
+    const ambientFps = qualityTier === 'mobile' ? 24 : qualityTier === 'tablet' ? 30 : 45;
+    const updateAmbient = now - this._lastAmbientUpdateAt >= 1000 / ambientFps;
+
+    if (updateAmbient) {
+      const cameraY = this.scene.camera.position.y;
+      const heroActive = Math.abs(cameraY - this.hero.group.position.y) < 18;
+      const ribbonActive = cameraY < 5 && cameraY > -79;
+      const mandalaActive = Math.abs(cameraY - this.mandala.group.position.y) < 22;
+
+      if (heroActive) {
+        this.hero.update(time);
+        this.hero.updateMouse(this.scene.mouse);
+      }
+      if (ribbonActive) this.ribbon.update(time);
+      if (mandalaActive) this.mandala.update(time);
+      this._lastAmbientUpdateAt = now;
     }
 
-    // Update 3D scenes
-    this.hero.update(time);
-    this.hero.updateMouse(this.scene.mouse);
-    this.ribbon.update(time);
-    this.mandala.update(time);
-
     // Render
-    this.scene.render(time);
+    this.scene.render(time, { updateDecorations: updateAmbient });
   }
 
   /* ═══════════════════════════════════════════════

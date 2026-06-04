@@ -31,7 +31,7 @@
   <link rel="preload" as="image" href="assets/herese-logo-complete.png?v=herese-logo-complete-20260603a" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/index.css?v=text-readability-20260604a" />
+  <link rel="stylesheet" href="css/index.css?v=platform-scroll-perf-20260604a" />
 
   <!-- Import Map for ES Modules -->
   <script type="importmap">
@@ -45,8 +45,11 @@
     }
   }
   </script>
-  <link rel="modulepreload" href="js/main.js?v=text-readability-20260604a" />
-  <link rel="modulepreload" href="js/SceneManager.js?v=tablet-nav-perf-20260602a" />
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" crossorigin />
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/gsap@3.12.7/+esm" crossorigin />
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollTrigger.js/+esm" crossorigin />
+  <link rel="modulepreload" href="js/main.js?v=platform-scroll-perf-20260604a" />
+  <link rel="modulepreload" href="js/SceneManager.js?v=platform-scroll-perf-20260604a" />
 </head>
 
 <body>
@@ -594,7 +597,7 @@
 
   <!-- ═══════════════ MAIN SCRIPT ═══════════════ -->
   <script src="js/site-ui.js?v=cart-scroll-lock-20260602a" defer></script>
-  <script type="module" src="js/main.js?v=text-readability-20260604a"></script>
+  <script type="module" src="js/main.js?v=platform-scroll-perf-20260604a"></script>
 </body>
 
 </html>

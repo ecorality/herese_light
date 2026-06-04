@@ -11,12 +11,19 @@ export class LifecycleRibbon {
     this.group.position.y = -8.2;
 
     this.vinelineOpacity = 0.42;
+    this.qualityTier = this._qualityTier();
     this._seed = 1287;
     this.leaves = [];
     this.tendrils = [];
     this.phaseMarkers = [];
     this.flowerClusters = [];
     this.pollenClouds = [];
+    this._flowerMaterialCache = new Map();
+    this._flowerPetalGeometry = null;
+    this._flowerCenterGeometry = null;
+    this._flowerCenterMaterial = null;
+    this._berryGeometry = null;
+    this._phaseGlowGeometry = null;
 
     this._createMaterials();
     this._createRibbon();
@@ -28,6 +35,13 @@ export class LifecycleRibbon {
     this._createPhaseBlooms();
     this._createPollenClouds();
     this._createSoilLayer();
+  }
+
+  _qualityTier() {
+    const width = window.innerWidth;
+    if (width <= 768) return 'mobile';
+    if (width <= 1180 || window.matchMedia('(pointer: coarse)').matches) return 'tablet';
+    return 'desktop';
   }
 
   _createMaterials() {
@@ -121,8 +135,11 @@ export class LifecycleRibbon {
 
     this.curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.42);
 
-    const vineGeo = new THREE.TubeGeometry(this.curve, 420, 0.145, 20, false);
-    const glowGeo = new THREE.TubeGeometry(this.curve, 420, 0.38, 22, false);
+    const tubeSegments = this.qualityTier === 'mobile' ? 280 : this.qualityTier === 'tablet' ? 350 : 420;
+    const radialSegments = this.qualityTier === 'mobile' ? 12 : this.qualityTier === 'tablet' ? 16 : 20;
+    const glowRadialSegments = this.qualityTier === 'mobile' ? 14 : this.qualityTier === 'tablet' ? 18 : 22;
+    const vineGeo = new THREE.TubeGeometry(this.curve, tubeSegments, 0.145, radialSegments, false);
+    const glowGeo = new THREE.TubeGeometry(this.curve, tubeSegments, 0.38, glowRadialSegments, false);
 
     const vertexShader = `
       varying vec2 vUv;
@@ -219,7 +236,7 @@ export class LifecycleRibbon {
       fragmentShader: vineFragmentShader,
       uniforms: this.ribbonUniforms,
       transparent: true,
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       depthWrite: false,
     });
 
@@ -228,7 +245,7 @@ export class LifecycleRibbon {
       fragmentShader: glowFragmentShader,
       uniforms: this.ribbonUniforms,
       transparent: true,
-      side: THREE.DoubleSide,
+      side: THREE.BackSide,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
@@ -273,7 +290,8 @@ export class LifecycleRibbon {
       }
 
       const strandCurve = new THREE.CatmullRomCurve3(points);
-      const strandGeo = new THREE.TubeGeometry(strandCurve, 190, 0.024, 7, false);
+      const strandSegments = this.qualityTier === 'mobile' ? 130 : this.qualityTier === 'tablet' ? 160 : 190;
+      const strandGeo = new THREE.TubeGeometry(strandCurve, strandSegments, 0.024, this.qualityTier === 'mobile' ? 5 : 7, false);
       this.group.add(new THREE.Mesh(strandGeo, strandMats[s]));
     }
   }
@@ -478,6 +496,7 @@ export class LifecycleRibbon {
 
       leaf.userData = {
         baseY: leaf.position.y,
+        baseRotationZ: leaf.rotation.z,
         phase: this._range(0, Math.PI * 2),
         flutter: this._range(0.015, 0.045),
       };
@@ -529,6 +548,7 @@ export class LifecycleRibbon {
 
       cluster.userData = {
         baseY: cluster.position.y,
+        baseRotationZ: cluster.rotation.z,
         phase: this._range(0, Math.PI * 2),
         flutter: this._range(0.012, 0.032),
       };
@@ -552,7 +572,8 @@ export class LifecycleRibbon {
       );
       marker.rotation.set(0.25, sign * 0.58, sign * 0.18);
 
-      const berryGeo = new THREE.SphereGeometry(0.18, 18, 14);
+      this._berryGeometry ||= new THREE.SphereGeometry(0.18, 14, 10);
+      const berryGeo = this._berryGeometry;
       const berryMat = new THREE.MeshPhysicalMaterial({
         color,
         emissive: color,
@@ -574,7 +595,8 @@ export class LifecycleRibbon {
       }
       marker.add(berryCluster);
 
-      const glowGeo = new THREE.SphereGeometry(0.56, 24, 16);
+      this._phaseGlowGeometry ||= new THREE.SphereGeometry(0.56, 18, 12);
+      const glowGeo = this._phaseGlowGeometry;
       const glowMat = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
@@ -591,6 +613,7 @@ export class LifecycleRibbon {
         t,
         baseY: marker.position.y,
         baseScale: marker.scale.x,
+        baseRotationZ: marker.rotation.z,
         phase: i * 0.8,
       });
 
@@ -602,38 +625,14 @@ export class LifecycleRibbon {
     const group = new THREE.Group();
     const colors = Array.isArray(color) ? color : [color];
 
-    const petalShape = new THREE.Shape();
-    petalShape.moveTo(0, 0.34);
-    petalShape.bezierCurveTo(0.26, 0.24, 0.3, -0.12, 0, -0.38);
-    petalShape.bezierCurveTo(-0.3, -0.12, -0.26, 0.24, 0, 0.34);
-
-    const petalGeo = new THREE.ShapeGeometry(petalShape, 16);
-    const petalMats = colors.map(petalColor => new THREE.MeshPhysicalMaterial({
-      color: petalColor,
-      emissive: petalColor,
-      emissiveIntensity: 0.12,
-      roughness: 0.34,
-      metalness: 0.03,
-      clearcoat: 0.34,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: this.vinelineOpacity,
-      depthWrite: false,
-    }));
-
-    const petalCount = 7;
-    for (let i = 0; i < petalCount; i++) {
-      const angle = (i / petalCount) * Math.PI * 2;
-      const petal = new THREE.Mesh(petalGeo, petalMats[i % petalMats.length]);
-      petal.position.set(Math.cos(angle) * 0.13, Math.sin(angle) * 0.13, 0);
-      petal.rotation.z = angle - Math.PI * 0.5;
-      petal.scale.setScalar(scale);
-      group.add(petal);
-    }
-
-    const center = new THREE.Mesh(
-      new THREE.SphereGeometry(0.09 * scale * 2, 16, 12),
-      new THREE.MeshPhysicalMaterial({
+    if (!this._flowerPetalGeometry) {
+      const petalShape = new THREE.Shape();
+      petalShape.moveTo(0, 0.34);
+      petalShape.bezierCurveTo(0.26, 0.24, 0.3, -0.12, 0, -0.38);
+      petalShape.bezierCurveTo(-0.3, -0.12, -0.26, 0.24, 0, 0.34);
+      this._flowerPetalGeometry = new THREE.ShapeGeometry(petalShape, 16);
+      this._flowerCenterGeometry = new THREE.SphereGeometry(0.18, 12, 8);
+      this._flowerCenterMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xD8A13E,
         emissive: 0x9C5B18,
         emissiveIntensity: 0.16,
@@ -642,8 +641,40 @@ export class LifecycleRibbon {
         transparent: true,
         opacity: this.vinelineOpacity,
         depthWrite: false,
-      })
-    );
+      });
+    }
+
+    const petalMats = colors.map((petalColor) => {
+      const key = petalColor.toString(16);
+      if (!this._flowerMaterialCache.has(key)) {
+        this._flowerMaterialCache.set(key, new THREE.MeshPhysicalMaterial({
+          color: petalColor,
+          emissive: petalColor,
+          emissiveIntensity: 0.12,
+          roughness: 0.34,
+          metalness: 0.03,
+          clearcoat: 0.34,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: this.vinelineOpacity,
+          depthWrite: false,
+        }));
+      }
+      return this._flowerMaterialCache.get(key);
+    });
+
+    const petalCount = 7;
+    for (let i = 0; i < petalCount; i++) {
+      const angle = (i / petalCount) * Math.PI * 2;
+      const petal = new THREE.Mesh(this._flowerPetalGeometry, petalMats[i % petalMats.length]);
+      petal.position.set(Math.cos(angle) * 0.13, Math.sin(angle) * 0.13, 0);
+      petal.rotation.z = angle - Math.PI * 0.5;
+      petal.scale.setScalar(scale);
+      group.add(petal);
+    }
+
+    const center = new THREE.Mesh(this._flowerCenterGeometry, this._flowerCenterMaterial);
+    center.scale.setScalar(scale);
     center.position.z = 0.02;
     group.add(center);
 
@@ -703,18 +734,18 @@ export class LifecycleRibbon {
     this.leaves.forEach(leaf => {
       const sway = Math.sin(time * 1.4 + leaf.userData.phase) * leaf.userData.flutter;
       leaf.position.y = leaf.userData.baseY + sway * 2.2;
-      leaf.rotation.z += sway * 0.018;
+      leaf.rotation.z = leaf.userData.baseRotationZ + sway * 0.45;
     });
 
     this.phaseMarkers.forEach(marker => {
       marker.group.position.y = marker.baseY + Math.sin(time * 0.72 + marker.phase) * 0.11;
-      marker.group.rotation.z += Math.sin(time * 0.5 + marker.phase) * 0.0016;
+      marker.group.rotation.z = marker.baseRotationZ + Math.sin(time * 0.5 + marker.phase) * 0.012;
     });
 
     this.flowerClusters.forEach(cluster => {
       const sway = Math.sin(time * 0.8 + cluster.userData.phase) * cluster.userData.flutter;
       cluster.position.y = cluster.userData.baseY + sway * 2.1;
-      cluster.rotation.z += sway * 0.012;
+      cluster.rotation.z = cluster.userData.baseRotationZ + sway * 0.42;
     });
 
     this.tendrils.forEach((tendril, i) => {
@@ -722,7 +753,7 @@ export class LifecycleRibbon {
     });
 
     this.pollenClouds.forEach(cloud => {
-      cloud.rotation.y += 0.0008;
+      cloud.rotation.y = time * 0.012 + cloud.userData.phase;
       cloud.rotation.z = Math.sin(time * 0.2 + cloud.userData.phase) * 0.025;
       cloud.material.opacity = cloud.userData.baseOpacity + Math.sin(time * 0.8 + cloud.userData.phase) * 0.014;
     });

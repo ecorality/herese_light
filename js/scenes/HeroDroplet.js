@@ -8,6 +8,7 @@ import * as THREE from 'three';
 export class HeroDroplet {
   constructor() {
     this.group = new THREE.Group();
+    this.qualityTier = this._qualityTier();
     this.uniforms = {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector3(0, 0, 0) },
@@ -21,8 +22,17 @@ export class HeroDroplet {
     this._createAmbientParticles();
   }
 
+  _qualityTier() {
+    const width = window.innerWidth;
+    if (width <= 768) return 'mobile';
+    if (width <= 1180 || window.matchMedia('(pointer: coarse)').matches) return 'tablet';
+    return 'desktop';
+  }
+
   _createDroplet() {
-    const geo = new THREE.IcosahedronGeometry(3.2, 64);
+    const outerDetail = this.qualityTier === 'mobile' ? 24 : this.qualityTier === 'tablet' ? 34 : 48;
+    const innerDetail = this.qualityTier === 'mobile' ? 10 : this.qualityTier === 'tablet' ? 14 : 20;
+    const geo = new THREE.IcosahedronGeometry(3.2, outerDetail);
 
     // Custom shader material for iridescent fluid
     const vertexShader = `
@@ -156,7 +166,7 @@ export class HeroDroplet {
       fragmentShader,
       uniforms: this.uniforms,
       transparent: true,
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       depthWrite: false,
     });
 
@@ -164,7 +174,7 @@ export class HeroDroplet {
     this.group.add(this.droplet);
 
     // Inner glow sphere
-    const innerGeo = new THREE.IcosahedronGeometry(2.5, 32);
+    const innerGeo = new THREE.IcosahedronGeometry(2.5, innerDetail);
     const innerMat = new THREE.MeshPhysicalMaterial({
       color: 0xBE394F,
       emissive: 0xAE0F36,
@@ -173,6 +183,7 @@ export class HeroDroplet {
       opacity: 0.08,
       roughness: 1,
       metalness: 0,
+      depthWrite: false,
     });
     this.innerGlow = new THREE.Mesh(innerGeo, innerMat);
     this.group.add(this.innerGlow);
@@ -182,34 +193,28 @@ export class HeroDroplet {
     // Floating botanical particles inside the droplet
     this.botanicals = [];
     const botanicalColors = [0xDC343B, 0x8F3D37, 0x464B65, 0x9C7E41, 0xBE394F, 0x005871, 0x2F6F45, 0x6B8E35, 0x9BCB76];
-    const count = 25;
+    const count = this.qualityTier === 'mobile' ? 18 : this.qualityTier === 'tablet' ? 22 : 25;
+    const geometries = [
+      new THREE.SphereGeometry(1, 8, 8),
+      new THREE.TetrahedronGeometry(1, 0),
+      new THREE.TorusGeometry(1, 0.3, 6, 8),
+    ];
+    const materials = botanicalColors.map((color) => new THREE.MeshPhysicalMaterial({
+      color,
+      emissive: color,
+      emissiveIntensity: 0.18,
+      transparent: true,
+      opacity: 0.55,
+      roughness: 0.4,
+      metalness: 0.1,
+      depthWrite: false,
+    }));
 
     for (let i = 0; i < count; i++) {
       const size = 0.04 + Math.random() * 0.08;
-      let geo;
       const type = Math.floor(Math.random() * 3);
-      if (type === 0) {
-        // Tiny sphere (berry/seed)
-        geo = new THREE.SphereGeometry(size, 8, 8);
-      } else if (type === 1) {
-        // Small tetrahedron (crystal)
-        geo = new THREE.TetrahedronGeometry(size, 0);
-      } else {
-        // Tiny torus (petal ring)
-        geo = new THREE.TorusGeometry(size, size * 0.3, 6, 8);
-      }
-
-      const mat = new THREE.MeshPhysicalMaterial({
-        color: botanicalColors[i % botanicalColors.length],
-        emissive: botanicalColors[i % botanicalColors.length],
-        emissiveIntensity: 0.18,
-        transparent: true,
-        opacity: 0.55,
-        roughness: 0.4,
-        metalness: 0.1,
-      });
-
-      const mesh = new THREE.Mesh(geo, mat);
+      const mesh = new THREE.Mesh(geometries[type], materials[i % materials.length]);
+      mesh.scale.setScalar(size);
 
       // Random orbital parameters
       const radius = 0.8 + Math.random() * 1.8;
@@ -237,32 +242,31 @@ export class HeroDroplet {
       { color: 0x6B8E35, emissive: 0x263B15 },
       { color: 0x9BCB76, emissive: 0x385B22 },
     ];
+    const leafMaterials = greens.map((matData) => new THREE.MeshPhysicalMaterial({
+      color: matData.color,
+      emissive: matData.emissive,
+      emissiveIntensity: 0.22,
+      transparent: true,
+      opacity: 0.82,
+      roughness: 0.68,
+      metalness: 0.02,
+      clearcoat: 0.18,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    }));
+    const stemMat = new THREE.MeshPhysicalMaterial({
+      color: 0x476B2C,
+      emissive: 0x1C3314,
+      emissiveIntensity: 0.08,
+      transparent: true,
+      opacity: 0.52,
+      roughness: 0.76,
+      depthWrite: false,
+    });
+    const sprigCount = this.qualityTier === 'mobile' ? 12 : this.qualityTier === 'tablet' ? 14 : 16;
 
-    for (let i = 0; i < 16; i++) {
-      const matData = greens[i % greens.length];
-      const leafMat = new THREE.MeshPhysicalMaterial({
-        color: matData.color,
-        emissive: matData.emissive,
-        emissiveIntensity: 0.22,
-        transparent: true,
-        opacity: 0.82,
-        roughness: 0.68,
-        metalness: 0.02,
-        clearcoat: 0.18,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-      });
-
-      const stemMat = new THREE.MeshPhysicalMaterial({
-        color: 0x476B2C,
-        emissive: 0x1C3314,
-        emissiveIntensity: 0.08,
-        transparent: true,
-        opacity: 0.52,
-        roughness: 0.76,
-        depthWrite: false,
-      });
-
+    for (let i = 0; i < sprigCount; i++) {
+      const leafMat = leafMaterials[i % leafMaterials.length];
       const sprig = new THREE.Group();
       const stem = new THREE.Mesh(stemGeo, stemMat);
       stem.rotation.z = (i % 2 === 0 ? 1 : -1) * 0.28;

@@ -16,6 +16,9 @@ export class SceneManager {
     this.mouse = new THREE.Vector2(0, 0);
     this.targetMouse = new THREE.Vector2(0, 0);
     this.isMobileRuntime = this._detectMobileRuntime();
+    this.qualityTier = this._qualityTier();
+    this.usePostProcessing = this.qualityTier === 'desktop';
+    this._bgColor = new THREE.Color();
 
     this._initRenderer();
     this._initScene();
@@ -40,8 +43,9 @@ export class SceneManager {
   _initRenderer() {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      antialias: this._qualityTier() === 'desktop',
-      alpha: true,
+      antialias: this.qualityTier === 'desktop',
+      alpha: false,
+      stencil: false,
       powerPreference: 'high-performance',
     });
     this.renderer.setSize(this.width, this.height, false);
@@ -55,10 +59,9 @@ export class SceneManager {
     const dpr = window.devicePixelRatio || 1;
     const width = window.innerWidth;
 
-    if (width <= 480) return Math.min(dpr, 1);
-    if (width <= 768) return Math.min(dpr, 1.08);
-    if (width <= 1180) return Math.min(dpr, 1.28);
-    return Math.min(dpr, 1.75);
+    if (width <= 768) return Math.min(dpr, 1);
+    if (width <= 1180) return Math.min(dpr, 1.12);
+    return Math.min(dpr, 1.5);
   }
 
   _initScene() {
@@ -236,6 +239,10 @@ export class SceneManager {
   }
 
   _initPostProcessing() {
+    this.composer = null;
+    this.bloomPass = null;
+    if (!this.usePostProcessing) return;
+
     this.composer = new EffectComposer(this.renderer);
     this.composer.setPixelRatio(this._getPixelRatio());
 
@@ -280,6 +287,8 @@ export class SceneManager {
     if (isMobileChromeResize) return false;
 
     this.isMobileRuntime = this._detectMobileRuntime();
+    this.qualityTier = this._qualityTier();
+    this.usePostProcessing = this.qualityTier === 'desktop' && Boolean(this.composer);
     this.width = nextWidth;
     this.height = nextHeight;
     const aspect = this.width / this.height;
@@ -306,7 +315,7 @@ export class SceneManager {
     this.renderer.setPixelRatio(this._getPixelRatio());
     this.renderer.setSize(this.width, this.height, false);
     this.composer?.setPixelRatio?.(this._getPixelRatio());
-    this.composer.setSize(this.width, this.height);
+    this.composer?.setSize(this.width, this.height);
     return true;
   }
 
@@ -321,9 +330,9 @@ export class SceneManager {
     const scaled = clampedProgress * (this.backgroundStops.length - 1);
     const index = Math.min(Math.floor(scaled), this.backgroundStops.length - 2);
     const localProgress = scaled - index;
-    const bgColor = this.backgroundStops[index].clone().lerp(this.backgroundStops[index + 1], localProgress);
-    this.scene.background.copy(bgColor);
-    this.scene.fog.color.copy(bgColor);
+    this._bgColor.copy(this.backgroundStops[index]).lerp(this.backgroundStops[index + 1], localProgress);
+    this.scene.background.copy(this._bgColor);
+    this.scene.fog.color.copy(this._bgColor);
     this.scene.fog.density = 0.007 + clampedProgress * 0.006;
 
     // Shift lights
@@ -333,18 +342,18 @@ export class SceneManager {
     this.rimLight.intensity = 0.28 + clampedProgress * 0.18;
 
     // Keep a visible, colored glow without washing the ribbon white.
-    this.bloomPass.strength = 0.12 + clampedProgress * 0.08;
+    if (this.bloomPass) this.bloomPass.strength = 0.12 + clampedProgress * 0.08;
   }
 
   /**
    * Render frame
    */
-  render(time) {
+  render(time, { updateDecorations = true } = {}) {
     // Smooth mouse lerp
     this.mouse.lerp(this.targetMouse, 0.05);
 
     // Animate botanicals
-    if (this.botanicals) {
+    if (updateDecorations && this.botanicals) {
       const meshes = this.botanicals.children;
       for (let i = 0; i < meshes.length; i++) {
         const mesh = meshes[i];
@@ -360,7 +369,7 @@ export class SceneManager {
       }
     }
 
-    if (this.dimensionalBotanicals) {
+    if (updateDecorations && this.dimensionalBotanicals) {
       const meshes = this.dimensionalBotanicals.children;
       for (let i = 0; i < meshes.length; i++) {
         const mesh = meshes[i];
@@ -380,6 +389,10 @@ export class SceneManager {
       }
     }
 
-    this.composer.render();
+    if (this.usePostProcessing && this.composer) {
+      this.composer.render();
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 }
