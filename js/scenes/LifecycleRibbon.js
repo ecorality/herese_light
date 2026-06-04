@@ -10,7 +10,7 @@ export class LifecycleRibbon {
     this.group.name = 'VINELINE';
     this.group.position.y = -8.2;
 
-    this.vinelineOpacity = 0.65;
+    this.vinelineOpacity = 0.42;
     this._seed = 1287;
     this.leaves = [];
     this.tendrils = [];
@@ -173,7 +173,7 @@ export class LifecycleRibbon {
         color = mix(color, phaseColor(t), scrollGlow * 0.34);
         color *= 0.74 + livingPulse * 0.2 + scrollGlow * 0.36;
 
-        gl_FragColor = vec4(color, 0.65);
+        gl_FragColor = vec4(color, 0.42);
       }
     `;
 
@@ -205,7 +205,7 @@ export class LifecycleRibbon {
         float breath = sin(uTime * 0.8 + t * 8.0) * 0.5 + 0.5;
         vec3 color = mix(vec3(0.55, 0.68, 0.28), phaseColor(t), 0.62 + scrollGlow * 0.34);
         float alpha = 0.065 + pulse * 0.028 + breath * 0.022 + scrollGlow * 0.26;
-        gl_FragColor = vec4(color, alpha * 0.65);
+        gl_FragColor = vec4(color, alpha * 0.42);
       }
     `;
 

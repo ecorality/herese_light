@@ -45,7 +45,7 @@
   --font-sans: 'Inter', -apple-system, sans-serif;
 
   /* Spacing */
-  --section-pad: clamp(4rem, 10vh, 8rem);
+  --section-pad: clamp(3rem, 7vh, 5.75rem);
   --content-max: 1200px;
 
   /* Transitions */
@@ -376,7 +376,7 @@ input:focus-visible {
 /* ─── MANIFESTO ─── */
 .section--manifesto {
   min-height: auto;
-  padding-top: clamp(2rem, 5vh, 4.5rem);
+  padding-top: clamp(1.2rem, 3vh, 2.6rem);
 }
 
 .manifesto-content {
@@ -406,8 +406,8 @@ input:focus-visible {
 /* ─── PRODUCT RITUAL ─── */
 .section--ritual {
   min-height: auto;
-  padding-top: var(--section-pad);
-  padding-bottom: var(--section-pad);
+  padding-top: clamp(2.4rem, 5.5vh, 4.8rem);
+  padding-bottom: clamp(2.4rem, 5.5vh, 4.8rem);
 }
 
 .ritual-content {
@@ -490,7 +490,7 @@ input:focus-visible {
 .lifecycle-header {
   text-align: center;
   max-width: 700px;
-  margin: 0 auto 4rem;
+  margin: 0 auto 2.8rem;
 }
 
 .lifecycle-title {
@@ -508,13 +508,13 @@ input:focus-visible {
 }
 
 .phase-panel {
-  min-height: 60vh;
+  min-height: 54vh;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(1.25rem, 4vw, 4rem);
   perspective: 1200px;
-  padding: 2rem clamp(1rem, 5vw, 4rem);
+  padding: 1.4rem clamp(1rem, 5vw, 4rem);
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
@@ -822,7 +822,7 @@ input:focus-visible {
   flex-direction: column;
   min-height: auto;
   overflow: hidden;
-  padding-top: calc(var(--section-pad) + 2rem);
+  padding-top: calc(var(--section-pad) + 1.1rem);
   padding-bottom: var(--section-pad);
   position: relative;
   isolation: isolate;
@@ -1393,7 +1393,7 @@ input:focus-visible {
   flex: 0 0 auto;
   height: auto;
   object-fit: contain;
-  width: clamp(156px, 13.2vw, 210px);
+  width: clamp(168px, 14.2vw, 226px);
 }
 
 .nav-links {
@@ -1650,7 +1650,7 @@ input:focus-visible {
 @media (max-width: 1180px) {
   :root {
     --content-max: min(100% - 2rem, 980px);
-    --section-pad: clamp(3.5rem, 8vh, 6rem);
+    --section-pad: clamp(2.8rem, 6vh, 4.75rem);
   }
 
   html,
@@ -1680,7 +1680,7 @@ input:focus-visible {
   }
 
   .phase-panel {
-    min-height: 54vh;
+    min-height: 50vh;
     padding-inline: clamp(1.2rem, 4vw, 2.6rem);
   }
 
@@ -1711,7 +1711,7 @@ input:focus-visible {
   }
 
   .nav-logo-img {
-    width: clamp(118px, 15vw, 154px);
+    width: clamp(126px, 15.5vw, 166px);
   }
 
   .nav-links {
@@ -1774,7 +1774,7 @@ input:focus-visible {
 @media (max-width: 768px) {
   :root {
     --content-max: calc(100vw - 1.5rem);
-    --section-pad: clamp(3rem, 8vh, 5rem);
+    --section-pad: clamp(2.5rem, 6vh, 4rem);
   }
 
   .main-nav {
@@ -1783,7 +1783,7 @@ input:focus-visible {
   }
 
   .nav-logo-img {
-    width: 164px;
+    width: 172px;
   }
 
   .nav-icon-btn,
@@ -1794,7 +1794,7 @@ input:focus-visible {
 
   .section {
     min-height: auto;
-    padding: clamp(3rem, 8vh, 5rem) clamp(0.9rem, 4.5vw, 1.4rem);
+    padding: clamp(2.5rem, 6vh, 4rem) clamp(0.9rem, 4.5vw, 1.4rem);
   }
 
   .section--hero {
@@ -1879,7 +1879,7 @@ input:focus-visible {
   }
 
   .section--lifecycle {
-    padding-top: clamp(3rem, 8vh, 4.5rem);
+    padding-top: clamp(2.4rem, 6vh, 3.8rem);
   }
 
   .lifecycle-header {
@@ -1891,7 +1891,7 @@ input:focus-visible {
     flex-direction: column;
     gap: 1.25rem;
     min-height: auto;
-    padding: clamp(2rem, 8vh, 4rem) 0;
+    padding: clamp(1.6rem, 5.5vh, 3rem) 0;
   }
 
   .phase-panel:nth-of-type(even),
@@ -2040,7 +2040,7 @@ input:focus-visible {
   }
 
   .nav-logo-img {
-    width: 144px;
+    width: 152px;
   }
 
   .nav-icon-btn,
@@ -2131,14 +2131,14 @@ input:focus-visible {
 @media (min-width: 1600px) {
   :root {
     --content-max: 1600px;
-    --section-pad: 12rem;
+    --section-pad: 7rem;
   }
   .hero-headline .line { font-size: clamp(3rem, 6vw, 5.5rem); }
   .hero-sub { font-size: 1.4rem; max-width: 800px; }
   .glass-card { padding: 4.5rem; }
   .ritual-title { font-size: 3.8rem; }
   .phase-name { font-size: 3.2rem; }
-  .nav-logo-img { width: 210px; }
+  .nav-logo-img { width: 226px; }
   .nav-links a { font-size: 1rem; }
 }
 
@@ -2749,6 +2749,47 @@ select {
     0 1px 0 rgba(255, 247, 244, 0.82),
     0 8px 22px rgba(83, 46, 59, 0.2),
     0 0 28px rgba(255, 190, 159, 0.22);
+}
+
+.manifesto-headline,
+.ritual-title,
+.lifecycle-title,
+.transparency-title,
+.waitlist-title,
+.gift-title,
+.testimonials-title,
+.footer-title {
+  color: #351923;
+}
+
+.manifesto-text p,
+.ritual-copy p,
+.ritual-point,
+.lifecycle-intro,
+.phase-desc,
+.ingredient-card p,
+.waitlist-content p,
+.gift-content p,
+.testimonial-bubble p,
+.footer-content p {
+  color: rgba(53, 25, 35, 0.9);
+}
+
+.manifesto-text strong,
+.ingredient-tag,
+.phase-pack-option span,
+.product-pack-option span {
+  color: rgba(53, 25, 35, 0.88);
+}
+
+.phase-stage,
+.phase-flavor {
+  opacity: 1;
+}
+
+.lifecycle-header {
+  position: relative;
+  z-index: 3;
 }
 
 .hero-sub,

@@ -4,7 +4,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { SceneManager } from './SceneManager.js?v=tablet-nav-perf-20260602a';
 import { HeroDroplet } from './scenes/HeroDroplet.js?v=womb-greens-20260531b';
-import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=herese-final-20260603a';
+import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=text-readability-20260604a';
 import { Mandala } from './scenes/Mandala.js?v=mandala-scroll-smooth-20260602a';
 import { shopify } from './shopify.js';
 
@@ -183,7 +183,7 @@ class HereseApp {
     // ── Lifecycle: scroll-driven camera dive along ribbon ──
     ScrollTrigger.create({
       trigger: '#lifecycle',
-      start: 'top 85%',
+      start: 'top bottom',
       endTrigger: '#lifecycle',
       end: 'bottom bottom',
       scrub: 2,
@@ -194,8 +194,9 @@ class HereseApp {
         this.scene.camera.position.y = -p * 45;
         this.scene.camera.position.z = 12 - p * 4;
 
-        // Move HeroDroplet up and out of the way
-        this.hero.group.position.y = 2.6 + p * 24;
+        // Keep the womb resting behind the Why HERESE card once it has arrived there.
+        this.hero.group.scale.setScalar(0.5);
+        this.hero.group.position.y = 2.6;
 
         // Update ribbon glow
         this.ribbon.updateScroll(p);
