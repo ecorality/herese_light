@@ -25,6 +25,7 @@ class HereseApp {
     this.audioMuted = false;
     this.clock = new THREE.Clock();
     this.isMobileRuntime = this._detectMobileRuntime();
+    this.mobileLite = this.isMobileRuntime;
     this._layoutViewport = { width: window.innerWidth, height: window.innerHeight };
     this._lastScrollProgress = -1;
     this._shopifyHydrationStarted = false;
@@ -35,6 +36,7 @@ class HereseApp {
     this._pageScrollRAF = null;
     this._boundAnimate = this._animate.bind(this);
     window.HERESE_APP = this;
+    document.body.classList.toggle('mobile-lite', this.mobileLite);
 
     this._initScene();
     this._initForms();
@@ -52,6 +54,16 @@ class HereseApp {
 
   _initScene() {
     const canvas = document.getElementById('sanctuary-canvas');
+    if (this.mobileLite) {
+      canvas?.setAttribute('aria-hidden', 'true');
+      this.scene = null;
+      this.hero = null;
+      this.ribbon = null;
+      this.mandala = null;
+      this._initScrollPerformanceTracking();
+      return;
+    }
+
     this.scene = new SceneManager(canvas);
 
     // Create 3D elements
@@ -80,9 +92,15 @@ class HereseApp {
 
       this._layoutViewport = { width, height };
       this.isMobileRuntime = this._detectMobileRuntime();
+      this.mobileLite = this.isMobileRuntime;
+      document.body.classList.toggle('mobile-lite', this.mobileLite);
 
       if (this._resizeRAF) cancelAnimationFrame(this._resizeRAF);
       this._resizeRAF = requestAnimationFrame(() => {
+        if (!this.scene) {
+          ScrollTrigger.refresh();
+          return;
+        }
         const didResize = this.scene.resize({ force });
         if (didResize !== false && this.isEntered) ScrollTrigger.refresh();
       });
@@ -145,6 +163,11 @@ class HereseApp {
      ═══════════════════════════════════════════════ */
 
   _initGSAP() {
+    if (!this.scene || !this.hero || !this.ribbon || !this.mandala) {
+      this._initMobileReveals();
+      return;
+    }
+
     const sceneScrub = this.isMobileRuntime ? 0.35 : 0.9;
     const revealScrub = this.isMobileRuntime ? 0.3 : 0.75;
 
@@ -365,11 +388,48 @@ class HereseApp {
 
     // ── CTA buttons scroll behavior ──
     document.getElementById('cta-flow')?.addEventListener('click', () => {
-      this._scrollTo('#lifecycle', 1.5);
+      this._scrollTo('#phase-quiz', 1.25);
     });
 
     document.getElementById('cta-sisterhood')?.addEventListener('click', () => {
-      this._scrollTo('#waitlist', 1.8);
+      this._scrollTo('#lifecycle', 1.4);
+    });
+  }
+
+  _initMobileReveals() {
+    gsap.set('.hero-headline .line, .hero-sub, .hero-ctas', { opacity: 1, y: 0 });
+
+    document.getElementById('cta-flow')?.addEventListener('click', () => {
+      this._scrollTo('#phase-quiz', 1);
+    });
+
+    document.getElementById('cta-sisterhood')?.addEventListener('click', () => {
+      this._scrollTo('#lifecycle', 1);
+    });
+
+    const revealTargets = document.querySelectorAll(
+      '.manifesto-content, .ritual-copy, .ritual-gallery, .quiz-copy, .phase-quiz-card, .lifecycle-header, .phase-panel, .transparency-header, .ingredient-card, .waitlist-content, .gift-content, .testimonial-bubble'
+    );
+
+    revealTargets.forEach((target) => {
+      gsap.from(target, {
+        scrollTrigger: {
+          trigger: target,
+          start: 'top 86%',
+          once: true,
+        },
+        opacity: 0,
+        y: 28,
+        duration: 0.52,
+        ease: 'power2.out',
+      });
+    });
+
+    ScrollTrigger.create({
+      trigger: '#waitlist',
+      start: 'top 70%',
+      once: true,
+      onEnter: () => this._animateCounter(),
     });
   }
 
@@ -531,7 +591,7 @@ class HereseApp {
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const scrollProgress = window.scrollY / maxScroll;
       if (Math.abs(scrollProgress - this._lastScrollProgress) > 0.0002) {
-        this.scene.updateScroll(scrollProgress);
+        this.scene?.updateScroll(scrollProgress);
         this._lastScrollProgress = scrollProgress;
       }
     };
@@ -568,7 +628,7 @@ class HereseApp {
       counterEl.textContent = (current + 1).toLocaleString();
 
       // Mandala burst
-      this.mandala.burst();
+      this.mandala?.burst?.();
     });
 
     // Gift form
@@ -586,7 +646,7 @@ class HereseApp {
 
   _animate(now = performance.now()) {
     requestAnimationFrame(this._boundAnimate);
-    if (document.hidden) return;
+    if (document.hidden || !this.scene) return;
 
     const qualityTier = this.scene.qualityTier;
     const isScrolling = now < this._scrollActiveUntil;

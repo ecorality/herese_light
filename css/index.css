@@ -109,6 +109,10 @@ input:focus-visible {
   pointer-events: none;
 }
 
+html.mobile-lite-root #sanctuary-canvas {
+  display: none !important;
+}
+
 /* ─── ENTRANCE OVERLAY ─── */
 /* ─── BUTTONS: LIQUID MORPHISM ─── */
 .btn-liquid {
@@ -182,6 +186,7 @@ input:focus-visible {
   justify-content: center;
   padding: var(--section-pad) clamp(1.5rem, 5vw, 4rem);
   position: relative;
+  scroll-margin-top: 96px;
 }
 
 .section-label {
@@ -265,6 +270,15 @@ input:focus-visible {
   pointer-events: none;
 }
 
+.hero-kicker {
+  color: rgba(174, 15, 54, 0.82);
+  font-size: clamp(0.72rem, 1vw, 0.86rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
 .hero-headline {
   color: #3F2430;
   font-family: var(--font-serif);
@@ -344,6 +358,24 @@ input:focus-visible {
   flex-wrap: wrap;
   opacity: 0;
   transform: translateY(20px);
+}
+
+.hero-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 1.45rem;
+}
+
+.hero-trust-row span {
+  background: rgba(255, 247, 244, 0.62);
+  border: 1px solid rgba(83, 46, 59, 0.14);
+  border-radius: 999px;
+  color: rgba(83, 46, 59, 0.72);
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 0.42rem 0.72rem;
 }
 
 .scroll-hint {
@@ -478,6 +510,158 @@ input:focus-visible {
   object-fit: cover;
   object-position: center;
   width: 100%;
+}
+
+/* ─── FIND YOUR PHASE QUIZ ─── */
+.section--quiz {
+  min-height: auto;
+  padding-top: clamp(2.6rem, 6vh, 5rem);
+  padding-bottom: clamp(3rem, 7vh, 5.5rem);
+}
+
+.quiz-shell {
+  align-items: stretch;
+  display: grid;
+  gap: clamp(1.3rem, 4vw, 3rem);
+  grid-template-columns: minmax(0, 0.78fr) minmax(320px, 1fr);
+  max-width: var(--content-max);
+  width: 100%;
+}
+
+.quiz-copy,
+.phase-quiz-card {
+  position: relative;
+  z-index: 2;
+}
+
+.quiz-copy {
+  align-self: center;
+  max-width: 520px;
+}
+
+.quiz-title {
+  color: #532E3B;
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  font-weight: 500;
+  line-height: 1.04;
+  margin-bottom: 1.1rem;
+}
+
+.quiz-copy p {
+  color: rgba(83, 46, 59, 0.78);
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  line-height: 1.8;
+}
+
+.quiz-trust-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+
+.quiz-trust-list span {
+  background: rgba(255, 247, 244, 0.62);
+  border: 1px solid rgba(83, 46, 59, 0.14);
+  border-radius: 999px;
+  color: rgba(83, 46, 59, 0.72);
+  font-size: 0.76rem;
+  font-weight: 850;
+  padding: 0.45rem 0.72rem;
+}
+
+.phase-quiz-card {
+  background:
+    radial-gradient(circle at 92% 10%, rgba(156, 126, 65, 0.16), transparent 18rem),
+    linear-gradient(145deg, rgba(255, 247, 244, 0.88), rgba(238, 212, 217, 0.68));
+  min-height: 430px;
+}
+
+.quiz-progress-meta {
+  color: rgba(83, 46, 59, 0.62);
+  display: flex;
+  font-size: 0.82rem;
+  font-weight: 900;
+  justify-content: space-between;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quiz-progress-track {
+  background: rgba(83, 46, 59, 0.12);
+  border-radius: 999px;
+  height: 9px;
+  margin: 0.9rem 0 2rem;
+  overflow: hidden;
+}
+
+.quiz-progress-track span {
+  background: linear-gradient(90deg, #BE394F, #9C7E41, #005871);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transition: width 0.32s var(--ease-silk);
+  width: 0;
+}
+
+#quiz-question,
+.quiz-result h3 {
+  color: #532E3B;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1.6rem;
+}
+
+.quiz-option {
+  background: rgba(255, 247, 244, 0.72);
+  border: 1px solid rgba(83, 46, 59, 0.16);
+  border-radius: 16px;
+  color: rgba(83, 46, 59, 0.84);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 850;
+  min-height: 58px;
+  padding: 0.95rem 1rem;
+  text-align: left;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.quiz-option:hover,
+.quiz-option:focus-visible {
+  background: rgba(190, 57, 79, 0.08);
+  border-color: rgba(190, 57, 79, 0.38);
+  transform: translateY(-1px);
+}
+
+.quiz-result p {
+  color: rgba(83, 46, 59, 0.78);
+  font-size: 1.04rem;
+  line-height: 1.75;
+  margin-top: 1rem;
+}
+
+.quiz-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.6rem;
+}
+
+.phase-panel.quiz-recommended .phase-content {
+  border-color: rgba(190, 57, 79, 0.55);
+  box-shadow:
+    0 20px 70px rgba(190, 57, 79, 0.18),
+    0 0 0 2px rgba(190, 57, 79, 0.12);
 }
 
 /* ─── LIFECYCLE ─── */
@@ -2867,6 +3051,39 @@ body.is-scrolling .success-burst {
     filter: none;
     will-change: auto;
   }
+
+  body.mobile-lite {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 190, 159, 0.28), transparent 24rem),
+      radial-gradient(circle at 12% 28%, rgba(225, 239, 206, 0.36), transparent 18rem),
+      linear-gradient(180deg, #F3E7EA 0%, #F9D4C5 42%, #F3E7EA 100%);
+    overscroll-behavior-y: contain;
+  }
+
+  body.mobile-lite #sanctuary-canvas {
+    display: none !important;
+  }
+
+  body.mobile-lite .section {
+    transform: none !important;
+  }
+
+  body.mobile-lite .hero-headline .line,
+  body.mobile-lite .hero-sub,
+  body.mobile-lite .hero-ctas {
+    transform: none;
+  }
+
+  body.mobile-lite .glass-card {
+    background: rgba(255, 247, 244, 0.72);
+  }
+
+  body.mobile-lite .phase-product-floater,
+  body.mobile-lite .phase-panel:nth-of-type(even) .phase-product-floater,
+  body.mobile-lite .phase-panel:nth-of-type(odd) .phase-product-floater {
+    animation: none;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2874,5 +3091,50 @@ body.is-scrolling .success-burst {
   .scroll-hint-line,
   .success-burst {
     animation: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .quiz-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-copy {
+    max-width: 680px;
+    text-align: center;
+  }
+
+  .quiz-trust-list {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-trust-row,
+  .quiz-trust-list {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero-trust-row span,
+  .quiz-trust-list span {
+    text-align: center;
+  }
+
+  .phase-quiz-card {
+    min-height: auto;
+    padding: clamp(1.25rem, 5vw, 1.65rem);
+  }
+
+  .quiz-options {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-result-actions {
+    flex-direction: column;
+  }
+
+  .quiz-result-actions .btn-liquid {
+    width: 100%;
   }
 }

@@ -31,7 +31,12 @@
   <link rel="preload" as="image" href="assets/herese-logo-complete.png?v=herese-logo-complete-20260603a" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/index.css?v=platform-scroll-perf-20260604a" />
+  <link rel="stylesheet" href="css/index.css?v=cohesive-quiz-mobile-20260605a" />
+  <script>
+    if (window.matchMedia('(max-width: 768px), (pointer: coarse)').matches) {
+      document.documentElement.classList.add('mobile-lite-root');
+    }
+  </script>
 
   <!-- Import Map for ES Modules -->
   <script type="importmap">
@@ -48,7 +53,7 @@
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" crossorigin />
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/gsap@3.12.7/+esm" crossorigin />
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollTrigger.js/+esm" crossorigin />
-  <link rel="modulepreload" href="js/main.js?v=platform-scroll-perf-20260604a" />
+  <link rel="modulepreload" href="js/main.js?v=cohesive-quiz-mobile-20260605a" />
   <link rel="modulepreload" href="js/SceneManager.js?v=platform-scroll-perf-20260604a" />
 </head>
 
@@ -63,10 +68,10 @@
       <img src="assets/herese-logo-complete.png?v=herese-logo-complete-20260603a" alt="HERESE Breathe. Pause. Become." class="nav-logo-img" width="1535" height="700" decoding="async" fetchpriority="high" />
     </a>
     <div class="nav-links">
-      <a href="#hero">Sanctuary</a>
-      <a href="#manifesto">Manifesto</a>
-      <a href="#lifecycle">Lifecycle</a>
-      <a href="#waitlist">Waitlist</a>
+      <a href="#phase-quiz">Quiz</a>
+      <a href="#ritual">How It Works</a>
+      <a href="#lifecycle">Shop</a>
+      <a href="#transparency">Transparency</a>
     </div>
     <div class="nav-actions">
       <a id="search-btn" class="nav-icon-btn search-btn" href="#lifecycle" aria-label="Search products">
@@ -112,24 +117,29 @@
     <!-- ─── SECTION A: THE HERO ─── -->
     <section id="hero" class="section section--hero" data-section="hero">
       <div class="hero-content">
+        <p class="hero-kicker">Craving-first women's wellness drinks</p>
         <h1 class="hero-headline" id="hero-headline">
-          <span class="line line-1">Crave ≠ Need.</span>
-          <span class="line line-2">And that’s where we come in!</span>
-          <span class="line line-3 highlight">Wellness that tastes like</span>
-          <span class="line line-4 highlight">something you’d choose anyway.</span>
+          <span class="line line-1">Cravings are not random.</span>
+          <span class="line line-2">Find the ritual your body</span>
+          <span class="line line-3 highlight">is already asking for.</span>
         </h1>
         <p class="hero-sub" id="hero-sub">
-          HERESE turns the drinks you already love into daily support for your cycle, hormones, and sleep — from your first period through menopause and everything in between.
+          HERESE turns familiar cravings like chocolate, citrus, mango, berry, almond, and warm milk into daily wellness drink rituals for every stage of a woman's body.
         </p>
         <div class="hero-ctas">
           <button id="cta-flow" class="btn-liquid btn-primary" type="button">
-            <span class="btn-text">Shop by Phase</span>
+            <span class="btn-text">Find Your Phase</span>
             <span class="btn-shimmer"></span>
           </button>
           <button id="cta-sisterhood" class="btn-liquid btn-secondary" type="button">
-            <span class="btn-text">Learn the Science</span>
+            <span class="btn-text">Shop the Rituals</span>
             <span class="btn-shimmer"></span>
           </button>
+        </div>
+        <div class="hero-trust-row" aria-label="HERESE trust details">
+          <span>Daily sachet ritual</span>
+          <span>Phase-specific support</span>
+          <span>Clear ingredients</span>
         </div>
       </div>
     </section>
@@ -142,13 +152,9 @@
           We make cravings useful.
         </h2>
         <div class="manifesto-text">
-          <p>A craving is often not random. Around periods and hormonal shifts, the body can ask for sweetness, chocolate, salt,
-            cooling drinks, or something warm and grounding.</p>
-          <p>Sweet cravings can show up when mood and energy dip. Chocolate cravings are common during periods and can feel like the
-            body is asking for mineral-rich comfort. Salty cravings can appear with bloating, fluid shifts, and changing hydration
-            needs.</p>
-          <p><strong>HERESE starts there.</strong> We keep the taste women already want, then build each drink with herbs, minerals,
-            and phase-specific nutrition.</p>
+          <p>Most wellness starts by asking women to ignore cravings. HERESE starts by asking what the craving may be trying to say.</p>
+          <p>A chocolate craving around periods, a cooling citrus craving during heat, a tangy craving during energy dips, or a warm night drink before sleep can all become easier daily rituals.</p>
+          <p><strong>We keep the taste women already want.</strong> Then we pair it with herbs, minerals, and phase-specific nutrition chosen for that stage of life.</p>
           <p>The idea is simple: satisfy the craving, and support the body need behind it.</p>
         </div>
       </div>
@@ -159,13 +165,12 @@
       <div class="ritual-content">
         <div class="ritual-copy">
           <span class="section-label">How It Works</span>
-          <h2 class="ritual-title">Craving-first wellness drinks.</h2>
-          <p>Pick your phase, choose the flavour your body is already asking for, mix one sachet into water or milk, and drink it
-            like a normal daily ritual.</p>
+          <h2 class="ritual-title">Your body asks. Your ritual answers.</h2>
+          <p>Pick the moment you are in, choose the flavour your body is already asking for, mix one sachet into water or milk, and drink it like a normal daily ritual.</p>
           <div class="ritual-points">
-            <span class="ritual-point">Craving-led flavours like cacao, citrus, berry, green mango, almond, and vanilla</span>
-            <span class="ritual-point">Herbs, minerals, and nutrients chosen for each body phase</span>
-            <span class="ritual-point">Trial, 14-sachet, and 28-sachet packs for real routines</span>
+            <span class="ritual-point"><strong>Notice the craving.</strong> Chocolate, citrus, mango, berry, warm almond, or sleep latte.</span>
+            <span class="ritual-point"><strong>Match the phase.</strong> Periods, PCOS, perimenopause, menopause, sleep, or first-period years.</span>
+            <span class="ritual-point"><strong>Return to the ritual.</strong> Trial, 14-sachet, and 28-sachet packs for real routines.</span>
           </div>
         </div>
         <div class="ritual-gallery" aria-label="HERESE ritual packaging">
@@ -181,13 +186,57 @@
       </div>
     </section>
 
+    <!-- ─── SECTION C2: FIND YOUR PHASE QUIZ ─── -->
+    <section id="phase-quiz" class="section section--quiz" data-section="phase-quiz">
+      <div class="quiz-shell">
+        <div class="quiz-copy">
+          <span class="section-label">Find Your Phase</span>
+          <h2 class="quiz-title">Take the 60-second ritual quiz.</h2>
+          <p>Answer a few plain questions about your phase, craving, and preferred drink style. We will point you to the HERESE ritual that fits the moment.</p>
+          <div class="quiz-trust-list" aria-label="Quiz details">
+            <span>No medical advice</span>
+            <span>No confusing labels</span>
+            <span>Just a useful product match</span>
+          </div>
+        </div>
+
+        <div id="phase-quiz-card" class="phase-quiz-card glass-card" aria-live="polite">
+          <div class="quiz-progress-meta">
+            <span id="quiz-step-label">Question 1 of 5</span>
+            <span id="quiz-progress-label">0%</span>
+          </div>
+          <div class="quiz-progress-track" aria-hidden="true">
+            <span id="quiz-progress-bar"></span>
+          </div>
+          <div id="quiz-question-area">
+            <h3 id="quiz-question">Which phase feels closest right now?</h3>
+            <div id="quiz-options" class="quiz-options"></div>
+          </div>
+          <div id="quiz-result" class="quiz-result" hidden>
+            <span class="section-label">Your Ritual Match</span>
+            <h3 id="quiz-result-title">Pause.</h3>
+            <p id="quiz-result-copy"></p>
+            <div class="quiz-result-actions">
+              <a id="quiz-result-link" class="btn-liquid btn-primary" href="#lifecycle">
+                <span class="btn-text">View Ritual</span>
+                <span class="btn-shimmer"></span>
+              </a>
+              <button id="quiz-restart" class="btn-liquid btn-secondary" type="button">
+                <span class="btn-text">Retake Quiz</span>
+                <span class="btn-shimmer"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ─── SECTION D: THE 5-PHASE LIFECYCLE ─── -->
     <section id="lifecycle" class="section section--lifecycle" data-section="lifecycle">
       <div class="lifecycle-header">
         <span class="section-label">Shop by Phase</span>
         <h2 class="lifecycle-title" id="lifecycle-title">Find the craving. Match the need.</h2>
-        <p class="lifecycle-intro">Every HERESE product starts with a familiar craving and pairs it with a functional wellness
-          angle for that stage of the body.</p>
+        <p class="lifecycle-intro">Each product starts with a familiar flavour and pairs it with a functional wellness angle for that stage of the body.</p>
       </div>
 
       <!-- Phase 1: Menarche / BloomBurst -->
@@ -596,8 +645,8 @@
   </div><!-- /scroll-container -->
 
   <!-- ═══════════════ MAIN SCRIPT ═══════════════ -->
-  <script src="js/site-ui.js?v=cart-scroll-lock-20260602a" defer></script>
-  <script type="module" src="js/main.js?v=platform-scroll-perf-20260604a"></script>
+  <script src="js/site-ui.js?v=cohesive-quiz-mobile-20260605a" defer></script>
+  <script type="module" src="js/main.js?v=cohesive-quiz-mobile-20260605a"></script>
 </body>
 
 </html>

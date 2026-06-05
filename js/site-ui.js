@@ -173,10 +173,9 @@
           <button class="site-menu-close" type="button" aria-label="Close menu" data-close-menu>&times;</button>
         </div>
         <nav class="site-menu-links" aria-label="Site sections">
-          <a href="${href('index.html#hero')}">Sanctuary</a>
-          <a href="${href('index.html#manifesto')}">Manifesto</a>
-          <a href="${href('index.html#ritual')}">Ritual</a>
-          <a href="${href('index.html#lifecycle')}">Products</a>
+          <a href="${href('index.html#phase-quiz')}">Find Your Phase</a>
+          <a href="${href('index.html#ritual')}">How It Works</a>
+          <a href="${href('index.html#lifecycle')}">Shop Rituals</a>
           <a href="${href('index.html#transparency')}">Transparency Lab</a>
           <a href="${href('index.html#waitlist')}">Waitlist</a>
         </nav>
@@ -387,6 +386,196 @@
     });
   }
 
+  const quizQuestions = [
+    {
+      key: 'phase',
+      label: 'Which phase feels closest right now?',
+      options: [
+        'First period years',
+        'Regular periods',
+        'PMS-heavy cycles',
+        'PCOS / irregular cycles',
+        'Perimenopause',
+        'Menopause',
+        'Sleep or stress support'
+      ]
+    },
+    {
+      key: 'craving',
+      label: 'What do you crave most often?',
+      options: [
+        'Chocolate',
+        'Citrus / lemon',
+        'Mango / tangy',
+        'Berry / fruity',
+        'Warm milk / calming drink',
+        'Not sure'
+      ]
+    },
+    {
+      key: 'goal',
+      label: 'What support would feel most useful?',
+      options: [
+        'Energy',
+        'Calm',
+        'Craving support',
+        'Cycle comfort',
+        'Cooling / heat support',
+        'Sleep support'
+      ]
+    },
+    {
+      key: 'format',
+      label: 'What would you actually drink?',
+      options: [
+        'Cold drink',
+        'Warm drink',
+        'Chocolate-style drink',
+        'Sachet on the go',
+        'Not sure'
+      ]
+    },
+    {
+      key: 'routine',
+      label: 'How do you want the ritual to feel?',
+      options: [
+        'Light and refreshing',
+        'Rich and comforting',
+        'Steady and practical',
+        'Night-time and calming',
+        'Gentle and beginner-friendly'
+      ]
+    }
+  ];
+
+  function resultFor(productId, message) {
+    const product = productById(productId) || products[0];
+    return { product, message };
+  }
+
+  function buildQuizRecommendation(answers) {
+    const text = normalize(Object.values(answers).join(' '));
+
+    if (text.includes('first period') || text.includes('beginner') || text.includes('berry')) {
+      return resultFor('bloom-burst', 'BloomBurst is the closest match for first-period years and gentle berry-rose support.');
+    }
+
+    if (text.includes('pcos') || text.includes('irregular') || text.includes('mango') || text.includes('tangy')) {
+      return resultFor('core-correct', 'CoreCorrect matches tangy green-mango cravings and PCOS or metabolic routine support.');
+    }
+
+    if (text.includes('sleep') || text.includes('stress') || text.includes('warm milk') || text.includes('calming') || text.includes('night')) {
+      return resultFor('luna-sync', 'Sleep Latte matches warm night cravings, calm, and bedtime wind-down rituals.');
+    }
+
+    if (text.includes('menopause') || text.includes('almond') || text.includes('golden')) {
+      return resultFor('pause-prime', 'PausePrime matches warm golden comfort for menopause routines.');
+    }
+
+    if (text.includes('perimenopause') || text.includes('citrus') || text.includes('cooling') || text.includes('heat') || text.includes('cold drink') || text.includes('refreshing')) {
+      return resultFor('shift-steady', 'Pause. matches cooling citrus cravings and perimenopause support.');
+    }
+
+    if (text.includes('period') || text.includes('pms') || text.includes('chocolate') || text.includes('cycle comfort') || text.includes('rich')) {
+      return resultFor('flow-fuel', 'FlowFuel matches chocolate cravings and period comfort rituals.');
+    }
+
+    return resultFor('shift-steady', 'Pause. is a useful starting point if you are unsure where to begin.');
+  }
+
+  function initPhaseQuiz() {
+    const card = document.getElementById('phase-quiz-card');
+    if (!card) return;
+
+    const stepLabel = document.getElementById('quiz-step-label');
+    const progressLabel = document.getElementById('quiz-progress-label');
+    const progressBar = document.getElementById('quiz-progress-bar');
+    const questionArea = document.getElementById('quiz-question-area');
+    const questionEl = document.getElementById('quiz-question');
+    const optionsEl = document.getElementById('quiz-options');
+    const resultEl = document.getElementById('quiz-result');
+    const resultTitle = document.getElementById('quiz-result-title');
+    const resultCopy = document.getElementById('quiz-result-copy');
+    const resultLink = document.getElementById('quiz-result-link');
+    const restart = document.getElementById('quiz-restart');
+    if (!stepLabel || !progressLabel || !progressBar || !questionArea || !questionEl || !optionsEl || !resultEl || !resultTitle || !resultCopy || !resultLink || !restart) return;
+
+    let step = 0;
+    let answers = {};
+
+    const clearRecommendation = () => {
+      document.querySelectorAll('.phase-panel.quiz-recommended').forEach((panel) => {
+        panel.classList.remove('quiz-recommended');
+      });
+    };
+
+    const highlightProduct = (productId) => {
+      clearRecommendation();
+      const button = document.querySelector(`.add-to-cart[data-product-id="${productId}"]`);
+      button?.closest('.phase-panel')?.classList.add('quiz-recommended');
+    };
+
+    const renderQuestion = () => {
+      const current = quizQuestions[step];
+      const progress = Math.round((step / quizQuestions.length) * 100);
+      stepLabel.textContent = `Question ${step + 1} of ${quizQuestions.length}`;
+      progressLabel.textContent = `${progress}%`;
+      progressBar.style.width = `${progress}%`;
+      questionEl.textContent = current.label;
+      optionsEl.innerHTML = current.options.map((option) => `
+        <button class="quiz-option" type="button" data-value="${option}">
+          <span>${option}</span>
+        </button>
+      `).join('');
+      questionArea.hidden = false;
+      resultEl.hidden = true;
+    };
+
+    const showResult = () => {
+      const { product, message } = buildQuizRecommendation(answers);
+      stepLabel.textContent = 'Quiz complete';
+      progressLabel.textContent = '100%';
+      progressBar.style.width = '100%';
+      questionArea.hidden = true;
+      resultTitle.textContent = product.name;
+      resultCopy.textContent = message;
+      resultLink.href = href(product.path);
+      resultLink.querySelector('.btn-text').textContent = `View ${product.name}`;
+      resultEl.hidden = false;
+      highlightProduct(product.id);
+
+      try {
+        localStorage.setItem('herese-quiz-result-v1', JSON.stringify({
+          answers,
+          productId: product.id,
+          productName: product.name,
+          createdAt: new Date().toISOString()
+        }));
+      } catch (err) {
+        console.warn('[HERESE] Could not save quiz result:', err.message);
+      }
+    };
+
+    optionsEl.addEventListener('click', (event) => {
+      const option = event.target.closest('.quiz-option');
+      if (!option) return;
+      const current = quizQuestions[step];
+      answers = { ...answers, [current.key]: option.dataset.value || option.textContent.trim() };
+      step += 1;
+      if (step >= quizQuestions.length) showResult();
+      else renderQuestion();
+    });
+
+    restart.addEventListener('click', () => {
+      step = 0;
+      answers = {};
+      clearRecommendation();
+      renderQuestion();
+    });
+
+    renderQuestion();
+  }
+
   window.HERESE_SITE = {
     products,
     href,
@@ -401,5 +590,6 @@
     injectMenu();
     injectSearch();
     initProductCards();
+    initPhaseQuiz();
   });
 }());
