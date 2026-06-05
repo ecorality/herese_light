@@ -1,9 +1,9 @@
-import * as THREE from 'three';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-import { SceneManager } from './SceneManager.js?v=platform-scroll-perf-20260604a';
-import { HeroDroplet } from './scenes/HeroDroplet.js?v=platform-scroll-perf-20260604a';
-import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=platform-scroll-perf-20260604a';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import gsap from 'https://cdn.jsdelivr.net/npm/gsap@3.12.7/+esm';
+import ScrollTrigger from 'https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollTrigger.js/+esm';
+import { SceneManager } from './SceneManager.js?v=cohesive-quiz-mobile-20260605b';
+import { HeroDroplet } from './scenes/HeroDroplet.js?v=cohesive-quiz-mobile-20260605b';
+import { LifecycleRibbon } from './scenes/LifecycleRibbon.js?v=cohesive-quiz-mobile-20260605b';
 import { Mandala } from './scenes/Mandala.js?v=mandala-scroll-smooth-20260602a';
 import { shopify } from './shopify.js';
 
